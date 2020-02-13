@@ -1,4 +1,4 @@
-# Customised configurations of Nextflow pipelines
+# Examples of Nextflow pipelines
 
 *Yu Wan*
 
