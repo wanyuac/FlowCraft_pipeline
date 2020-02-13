@@ -1,10 +1,10 @@
 #!/bin/bash
 #PBS -N nf-basic_io_5
-#PBS -o /rdsgpfs/general/user/ywan1/home/nf/work/24/4e2731979973300626fef760ca30b1/.command.log
+#PBS -o /rdsgpfs/general/user/yuwan/home/nf/work/24/4e2731979973300626fef760ca30b1/.command.log
 #PBS -j oe
 #PBS -l walltime=01:00:00
 #PBS -lselect=1:ncpus=1:mem=1gb
-cd /rdsgpfs/general/user/ywan1/home/nf/work/24/4e2731979973300626fef760ca30b1
+cd /rdsgpfs/general/user/yuwan/home/nf/work/24/4e2731979973300626fef760ca30b1
 
 # NEXTFLOW TASK: basic_io (5)
 set -e
@@ -40,7 +40,7 @@ nxf_mktemp() {
 
 on_exit() {
   exit_status=${ret:=$?}
-  printf $exit_status > /rdsgpfs/general/user/ywan1/home/nf/work/24/4e2731979973300626fef760ca30b1/.exitcode
+  printf $exit_status > /rdsgpfs/general/user/yuwan/home/nf/work/24/4e2731979973300626fef760ca30b1/.exitcode
   set +u
   [[ "$tee1" ]] && kill $tee1 2>/dev/null
   [[ "$tee2" ]] && kill $tee2 2>/dev/null
@@ -58,11 +58,11 @@ trap on_term TERM INT USR1 USR2
 
 NXF_SCRATCH=''
 [[ $NXF_DEBUG > 0 ]] && nxf_env
-touch /rdsgpfs/general/user/ywan1/home/nf/work/24/4e2731979973300626fef760ca30b1/.command.begin
+touch /rdsgpfs/general/user/yuwan/home/nf/work/24/4e2731979973300626fef760ca30b1/.command.begin
 [[ $NXF_SCRATCH ]] && echo "nxf-scratch-dir $HOSTNAME:$NXF_SCRATCH" && cd $NXF_SCRATCH
 # stage input files
 rm -f 2.fasta
-ln -s /rdsgpfs/general/user/ywan1/home/nf/input/2.fasta 2.fasta
+ln -s /rdsgpfs/general/user/yuwan/home/nf/input/2.fasta 2.fasta
 
 set +e
 ctmp=$(set +u; nxf_mktemp /dev/shm 2>/dev/null || nxf_mktemp $TMPDIR)
@@ -73,7 +73,7 @@ tee1=$!
 tee .command.err < $cerr >&2 &
 tee2=$!
 (
-/bin/bash -ue /rdsgpfs/general/user/ywan1/home/nf/work/24/4e2731979973300626fef760ca30b1/.command.sh
+/bin/bash -ue /rdsgpfs/general/user/yuwan/home/nf/work/24/4e2731979973300626fef760ca30b1/.command.sh
 ) >$cout 2>$cerr &
 pid=$!
 wait $pid || ret=$?
