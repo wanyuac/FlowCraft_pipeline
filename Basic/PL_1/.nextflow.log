@@ -1,0 +1,46 @@
+Feb-13 18:48:15.680 [main] DEBUG nextflow.cli.Launcher - $> nextflow run -profile pbs_job pbs_job.nf
+Feb-13 18:48:17.881 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 19.01.0
+Feb-13 18:48:18.479 [main] INFO  nextflow.cli.CmdRun - Launching `pbs_job.nf` [elegant_chandrasekhar] - revision: f46a80b99e
+Feb-13 18:48:18.974 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /rdsgpfs/general/user/ywan1/home/nf/nextflow.config
+Feb-13 18:48:18.977 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /rdsgpfs/general/user/ywan1/home/nf/nextflow.config
+Feb-13 18:48:19.778 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `pbs_job`
+Feb-13 18:48:29.776 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [pbs_job]
+Feb-13 18:48:30.275 [main] DEBUG nextflow.Session - Session uuid: 04a9dcaa-c0e3-4ab0-806e-0c0f123a0e87
+Feb-13 18:48:30.275 [main] DEBUG nextflow.Session - Run name: elegant_chandrasekhar
+Feb-13 18:48:30.276 [main] DEBUG nextflow.Session - Executor pool size: 24
+Feb-13 18:48:30.981 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 19.01.0 build 5050
+  Modified: 22-01-2019 11:19 UTC (11:19 BST)
+  System: Linux 3.10.0-1062.9.1.el7.x86_64
+  Runtime: Groovy 2.5.5 on OpenJDK 64-Bit Server VM 10.0.2+13
+  Encoding: UTF-8 (UTF-8)
+  Process: 29628@login-5 [146.179.60.55]
+  CPUs: 24 - Mem: 188.9 GB (114.2 GB) - Swap: 0 (0)
+Feb-13 18:48:31.678 [main] DEBUG nextflow.Session - Work-dir: /rdsgpfs/general/user/ywan1/home/nf/work [gpfs]
+Feb-13 18:48:31.679 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /rdsgpfs/general/user/ywan1/home/nf/bin
+Feb-13 18:48:32.980 [main] DEBUG nextflow.Session - Session start invoked
+Feb-13 18:48:33.079 [main] DEBUG nextflow.processor.TaskDispatcher - Dispatcher > start
+Feb-13 18:48:33.080 [main] DEBUG nextflow.script.ScriptRunner - > Script parsing
+Feb-13 18:48:35.872 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Feb-13 18:48:37.782 [main] DEBUG nextflow.processor.ProcessFactory - << taskConfig executor: null
+Feb-13 18:48:37.783 [main] DEBUG nextflow.processor.ProcessFactory - >> processorType: 'local'
+Feb-13 18:48:37.880 [main] DEBUG nextflow.executor.Executor - Initializing executor: local
+Feb-13 18:48:37.974 [main] INFO  nextflow.executor.Executor - [warm up] executor > local
+Feb-13 18:48:37.980 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=24; memory=188.9 GB; capacity=24; pollInterval=100ms; dumpInterval=5m
+Feb-13 18:48:38.073 [main] DEBUG nextflow.processor.TaskDispatcher - Starting monitor: LocalPollingMonitor
+Feb-13 18:48:38.074 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: local)
+Feb-13 18:48:38.078 [main] DEBUG nextflow.executor.Executor - Invoke register for executor: local
+Feb-13 18:48:39.078 [main] DEBUG nextflow.Session - >>> barrier register (process: basic_io)
+Feb-13 18:48:39.180 [main] DEBUG nextflow.processor.TaskProcessor - Creating operator > basic_io -- maxForks: 24
+Feb-13 18:48:39.874 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Feb-13 18:48:39.875 [main] DEBUG nextflow.Session - Session await
+Feb-13 18:48:43.575 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-13 18:48:43.877 [Task submitter] INFO  nextflow.Session - [ac/b992b5] Submitted process > basic_io (1)
+Feb-13 18:48:45.074 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: basic_io (1); status: COMPLETED; exit: 0; error: -; workDir: /rdsgpfs/general/user/ywan1/home/nf/work/ac/b992b5702f20f08d6fb2148bd2d9ee]
+Feb-13 18:48:45.481 [Actor Thread 2] DEBUG nextflow.Session - <<< barrier arrive (process: basic_io)
+Feb-13 18:48:45.483 [main] DEBUG nextflow.Session - Session await > all process finished
+Feb-13 18:48:45.485 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: local)
+Feb-13 18:48:45.572 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Feb-13 18:48:45.579 [main] DEBUG nextflow.trace.StatsObserver - Workflow completed > WorkflowStats[succeedCount=1; failedCount=0; ignoredCount=0; cachedCount=0; succeedDuration=606ms; failedDuration=0ms; cachedDuration=0ms]
+Feb-13 18:48:46.372 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Feb-13 18:48:46.584 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
