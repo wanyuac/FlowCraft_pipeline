@@ -7,6 +7,7 @@ This repository contains short scripts for pipelines performing simple tasks.
 **Table of Content**
 
 - [First pipeline (PL\_1)](#PL1)
+- [Second pipeline: multiple input files (PL2)](#PL2)
 - [Options of Nextflow](#options)
 
 <br/>
@@ -17,25 +18,35 @@ This repository contains short scripts for pipelines performing simple tasks.
 This script implements a simple pipeline, which is composed of a single process `pbs_job` and runs on an HPC through the PBS. Users need three files to run this pipeline: `pbs_job.nf`, `nextflow.config`, and the input file `NC_028700__StrepPhageT2.fasta`. The command to run this pipeline is:
 
 ```bash
-nextflow run -profile pbs_job pbs_job.nf
+nextflow run pbs_job.nf -profile pbs_shifter
+
+N E X T F L O W  ~  version 19.01.0
+Launching `pbs_job.nf` [high_northcutt] - revision: c018187b0f
+[warm up] executor > pbs
+[22/8a3ae0] Submitted process > basic_io (1)
 ```
 
 A work directory `work` and a log file `.nextflow.log` are produced by Nextflow. The only output file `name.txt` is generated in the directory `work`. A hidden file `.command.run` is the script automatically generated from the pipeline script `pbs_job.nf` and the pipeline configuration file `nextflow.config` and submitted to PBS by Nextflow. In this script, the configuration `-lselect=1:ncpus=1:mem=1gb` is mandatorily required by the ICL's HPC.
 
-Note that we should not define an executor scope in `nextflow.config` as follows:
+<br/>
 
-```groovy
-executor {
-    name = "pbs"
-    jobName = "QC"
-}
-```
+## 2. Second pipeline: multiple input files (PL2)
 
-as Groovy throws out an exception:
+<a name = "PL2"></a>
+
+In this example, the pipeline takes as input multiple FASTA files and generate an output file for each FASTA file. All the output files are created under the same output folder. This example shows how to apply a process to multiple input files in parallel.
 
 ```bash
-[Task submitter] DEBUG n.executor.AbstractGridExecutor - Unable to resolve job custom name
-org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object 'QC' with class 'java.lang.String' to class 'groovy.lang.Closure'
+nextflow run multiple_inputs.nf -profile pbs_shifter
+
+N E X T F L O W  ~  version 19.01.0
+Launching `multiple_inputs.nf` [crazy_hodgkin] - revision: a74b249e8d
+[warm up] executor > pbs
+[24/4e2731] Submitted process > basic_io (5)
+[bb/92503e] Submitted process > basic_io (2)
+[dd/de8cb8] Submitted process > basic_io (3)
+[55/03020f] Submitted process > basic_io (4)
+[c1/2715b9] Submitted process > basic_io (1)
 ```
 
 <br/>
