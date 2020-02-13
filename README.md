@@ -1,4 +1,4 @@
-# Customised configurations of FlowCraft pipelines
+# Customised configurations of Nextflow pipelines
 
 *Yu Wan*
 
