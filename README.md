@@ -4,7 +4,7 @@
 
 
 
-This repository contains my pipelines created for practice and training purposes. Often in this repository I only include files that were manually modified for system compatibility or a specific analysis. An adaptation is often necessary when migrating these pipelines to other platforms since components of every pipeline may be system-dependent.
+This repository contains my pipelines created for practice and training purposes. Often in this repository I only include files that were manually modified for system compatibility or a specific analysis. Click each subdirectory for details. An adaptation is often necessary when migrating these pipelines to other platforms since components of every pipeline may be system-dependent.
 
 
 

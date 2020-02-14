@@ -1,47 +1,47 @@
-Feb-13 22:37:03.580 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pbs_job.nf -profile pbs_shifter
-Feb-13 22:37:05.478 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 19.01.0
-Feb-13 22:37:05.681 [main] INFO  nextflow.cli.CmdRun - Launching `pbs_job.nf` [high_northcutt] - revision: c018187b0f
-Feb-13 22:37:06.076 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /rdsgpfs/general/user/yuwan/home/nf/nextflow.config
-Feb-13 22:37:06.078 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /rdsgpfs/general/user/yuwan/home/nf/nextflow.config
-Feb-13 22:37:06.680 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `pbs_shifter`
-Feb-13 22:37:17.176 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [pbs_shifter]
-Feb-13 22:37:18.174 [main] DEBUG nextflow.Session - Session uuid: ecef2a70-890d-4df0-b5d2-912e808b6d5c
-Feb-13 22:37:18.175 [main] DEBUG nextflow.Session - Run name: high_northcutt
-Feb-13 22:37:18.176 [main] DEBUG nextflow.Session - Executor pool size: 24
-Feb-13 22:37:19.478 [main] DEBUG nextflow.cli.CmdRun - 
+Feb-14 22:22:56.192 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pbs_job.nf -profile pbs_shifter
+Feb-14 22:22:58.391 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 19.01.0
+Feb-14 22:22:58.586 [main] INFO  nextflow.cli.CmdRun - Launching `pbs_job.nf` [backstabbing_banach] - revision: c018187b0f
+Feb-14 22:22:58.990 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /rdsgpfs/general/user/ywan1/home/nf/nextflow.config
+Feb-14 22:22:59.084 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /rdsgpfs/general/user/ywan1/home/nf/nextflow.config
+Feb-14 22:22:59.887 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `pbs_shifter`
+Feb-14 22:23:10.584 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [pbs_shifter]
+Feb-14 22:23:11.193 [main] DEBUG nextflow.Session - Session uuid: 0affadc4-ee36-4258-bc12-5f92e09bfbf1
+Feb-14 22:23:11.193 [main] DEBUG nextflow.Session - Run name: backstabbing_banach
+Feb-14 22:23:11.281 [main] DEBUG nextflow.Session - Executor pool size: 24
+Feb-14 22:23:12.085 [main] DEBUG nextflow.cli.CmdRun - 
   Version: 19.01.0 build 5050
   Modified: 22-01-2019 11:19 UTC (11:19 BST)
   System: Linux 3.10.0-1062.9.1.el7.x86_64
   Runtime: Groovy 2.5.5 on OpenJDK 64-Bit Server VM 10.0.2+13
   Encoding: UTF-8 (UTF-8)
-  Process: 24139@login-5 [146.179.60.55]
-  CPUs: 24 - Mem: 188.9 GB (131.6 GB) - Swap: 0 (0)
-Feb-13 22:37:20.284 [main] DEBUG nextflow.Session - Work-dir: /rdsgpfs/general/user/yuwan/home/nf/work [gpfs]
-Feb-13 22:37:20.373 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /rdsgpfs/general/user/yuwan/home/nf/bin
-Feb-13 22:37:21.575 [main] DEBUG nextflow.Session - Session start invoked
-Feb-13 22:37:21.581 [main] DEBUG nextflow.processor.TaskDispatcher - Dispatcher > start
-Feb-13 22:37:21.582 [main] DEBUG nextflow.script.ScriptRunner - > Script parsing
-Feb-13 22:37:24.279 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
-Feb-13 22:37:26.976 [main] DEBUG nextflow.processor.ProcessFactory - << taskConfig executor: pbs
-Feb-13 22:37:26.977 [main] DEBUG nextflow.processor.ProcessFactory - >> processorType: 'pbs'
-Feb-13 22:37:27.180 [main] DEBUG nextflow.executor.Executor - Initializing executor: pbs
-Feb-13 22:37:27.275 [main] INFO  nextflow.executor.Executor - [warm up] executor > pbs
-Feb-13 22:37:27.477 [main] DEBUG n.processor.TaskPollingMonitor - Creating task monitor for executor 'pbs' > capacity: 100; pollInterval: 5s; dumpInterval: 5m 
-Feb-13 22:37:27.575 [main] DEBUG nextflow.processor.TaskDispatcher - Starting monitor: TaskPollingMonitor
-Feb-13 22:37:27.576 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: pbs)
-Feb-13 22:37:27.673 [main] DEBUG nextflow.executor.Executor - Invoke register for executor: pbs
-Feb-13 22:37:27.676 [main] DEBUG n.executor.AbstractGridExecutor - Creating executor 'pbs' > queue-stat-interval: 1m
-Feb-13 22:37:28.777 [main] DEBUG nextflow.Session - >>> barrier register (process: basic_io)
-Feb-13 22:37:28.782 [main] DEBUG nextflow.processor.TaskProcessor - Creating operator > basic_io -- maxForks: 24
-Feb-13 22:37:29.481 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
-Feb-13 22:37:29.573 [main] DEBUG nextflow.Session - Session await
-Feb-13 22:37:36.379 [Task submitter] DEBUG nextflow.executor.GridTaskHandler - [PBS] submitted process basic_io (1) > jobId: 1070304.pbs; workDir: /rdsgpfs/general/user/yuwan/home/nf/work/22/8a3ae0a2ee77d829b6a25eacdf43c5
-Feb-13 22:37:36.475 [Task submitter] INFO  nextflow.Session - [22/8a3ae0] Submitted process > basic_io (1)
-Feb-13 22:38:18.175 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[jobId: 1070304.pbs; id: 1; name: basic_io (1); status: COMPLETED; exit: 0; error: -; workDir: /rdsgpfs/general/user/yuwan/home/nf/work/22/8a3ae0a2ee77d829b6a25eacdf43c5 started: 1581633497901; exited: 2020-02-13T22:38:16.621634Z; ]
-Feb-13 22:38:18.197 [Actor Thread 2] DEBUG nextflow.Session - <<< barrier arrive (process: basic_io)
-Feb-13 22:38:18.200 [main] DEBUG nextflow.Session - Session await > all process finished
-Feb-13 22:38:18.204 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: pbs)
-Feb-13 22:38:18.204 [main] DEBUG nextflow.Session - Session await > all barriers passed
-Feb-13 22:38:18.273 [main] DEBUG nextflow.trace.StatsObserver - Workflow completed > WorkflowStats[succeedCount=1; failedCount=0; ignoredCount=0; cachedCount=0; succeedDuration=187ms; failedDuration=0ms; cachedDuration=0ms]
-Feb-13 22:38:18.782 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
-Feb-13 22:38:18.997 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
+  Process: 15085@login-6 [146.179.60.56]
+  CPUs: 24 - Mem: 188.9 GB (156 GB) - Swap: 0 (0)
+Feb-14 22:23:13.781 [main] DEBUG nextflow.Session - Work-dir: /rdsgpfs/general/user/ywan1/home/nf/work [gpfs]
+Feb-14 22:23:13.783 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /rdsgpfs/general/user/ywan1/home/nf/bin
+Feb-14 22:23:15.190 [main] DEBUG nextflow.Session - Session start invoked
+Feb-14 22:23:15.283 [main] DEBUG nextflow.processor.TaskDispatcher - Dispatcher > start
+Feb-14 22:23:15.284 [main] DEBUG nextflow.script.ScriptRunner - > Script parsing
+Feb-14 22:23:17.686 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Feb-14 22:23:20.183 [main] DEBUG nextflow.processor.ProcessFactory - << taskConfig executor: pbs
+Feb-14 22:23:20.184 [main] DEBUG nextflow.processor.ProcessFactory - >> processorType: 'pbs'
+Feb-14 22:23:20.385 [main] DEBUG nextflow.executor.Executor - Initializing executor: pbs
+Feb-14 22:23:20.481 [main] INFO  nextflow.executor.Executor - [warm up] executor > pbs
+Feb-14 22:23:20.584 [main] DEBUG n.processor.TaskPollingMonitor - Creating task monitor for executor 'pbs' > capacity: 100; pollInterval: 5s; dumpInterval: 5m 
+Feb-14 22:23:20.681 [main] DEBUG nextflow.processor.TaskDispatcher - Starting monitor: TaskPollingMonitor
+Feb-14 22:23:20.682 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: pbs)
+Feb-14 22:23:20.685 [main] DEBUG nextflow.executor.Executor - Invoke register for executor: pbs
+Feb-14 22:23:20.781 [main] DEBUG n.executor.AbstractGridExecutor - Creating executor 'pbs' > queue-stat-interval: 1m
+Feb-14 22:23:21.784 [main] DEBUG nextflow.Session - >>> barrier register (process: basic_io)
+Feb-14 22:23:21.883 [main] DEBUG nextflow.processor.TaskProcessor - Creating operator > basic_io -- maxForks: 24
+Feb-14 22:23:22.485 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Feb-14 22:23:22.486 [main] DEBUG nextflow.Session - Session await
+Feb-14 22:23:27.687 [Task submitter] DEBUG nextflow.executor.GridTaskHandler - [PBS] submitted process basic_io (1) > jobId: 1073769.pbs; workDir: /rdsgpfs/general/user/ywan1/home/nf/work/c2/48ff7a7d3fff1dfb81e3f208e7a4d1
+Feb-14 22:23:27.781 [Task submitter] INFO  nextflow.Session - [c2/48ff7a] Submitted process > basic_io (1)
+Feb-14 22:24:50.820 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[jobId: 1073769.pbs; id: 1; name: basic_io (1); status: COMPLETED; exit: 0; error: -; workDir: /rdsgpfs/general/user/ywan1/home/nf/work/c2/48ff7a7d3fff1dfb81e3f208e7a4d1 started: 1581719090806; exited: 2020-02-14T22:24:49.410153Z; ]
+Feb-14 22:24:50.841 [Actor Thread 2] DEBUG nextflow.Session - <<< barrier arrive (process: basic_io)
+Feb-14 22:24:50.843 [main] DEBUG nextflow.Session - Session await > all process finished
+Feb-14 22:24:50.845 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: pbs)
+Feb-14 22:24:50.881 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Feb-14 22:24:50.888 [main] DEBUG nextflow.trace.StatsObserver - Workflow completed > WorkflowStats[succeedCount=1; failedCount=0; ignoredCount=0; cachedCount=0; succeedDuration=9ms; failedDuration=0ms; cachedDuration=0ms]
+Feb-14 22:24:51.383 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Feb-14 22:24:51.493 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

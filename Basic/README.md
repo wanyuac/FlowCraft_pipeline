@@ -15,15 +15,15 @@ This repository contains short scripts for pipelines performing simple tasks.
 ## 1. First pipeline
 <a name = "PL1"></a>
 
-This script implements a simple pipeline, which is composed of a single process `pbs_job` and runs on an HPC through the PBS. Users need three files to run this pipeline: `pbs_job.nf`, `nextflow.config`, and the input file `NC_028700__StrepPhageT2.fasta`. The command to run this pipeline is:
+This script implements a simple pipeline, which is composed of a single process `pbs_job` and runs on an HPC through the PBS. Users need three files to run this pipeline: `pbs_job.nf`, `nextflow.config`, and the input file `demo1.fasta`. The command to run this pipeline is:
 
 ```bash
 nextflow run pbs_job.nf -profile pbs_shifter
 
 N E X T F L O W  ~  version 19.01.0
-Launching `pbs_job.nf` [high_northcutt] - revision: c018187b0f
+Launching `pbs_job.nf` [backstabbing_banach] - revision: c018187b0f
 [warm up] executor > pbs
-[22/8a3ae0] Submitted process > basic_io (1)
+[c2/48ff7a] Submitted process > basic_io (1)
 ```
 
 A work directory `work` and a log file `.nextflow.log` are produced by Nextflow. The only output file `name.txt` is generated in the directory `work`. A hidden file `.command.run` is the script automatically generated from the pipeline script `pbs_job.nf` and the pipeline configuration file `nextflow.config` and submitted to PBS by Nextflow. In this script, the configuration `-lselect=1:ncpus=1:mem=1gb` is mandatorily required by the ICL's HPC.
@@ -40,13 +40,13 @@ In this example, the pipeline takes as input multiple FASTA files and generate a
 nextflow run multiple_inputs.nf -profile pbs_shifter
 
 N E X T F L O W  ~  version 19.01.0
-Launching `multiple_inputs.nf` [crazy_hodgkin] - revision: a74b249e8d
+Launching `multiple_inputs.nf` [grave_gilbert] - revision: a74b249e8d
 [warm up] executor > pbs
-[24/4e2731] Submitted process > basic_io (5)
-[bb/92503e] Submitted process > basic_io (2)
-[dd/de8cb8] Submitted process > basic_io (3)
-[55/03020f] Submitted process > basic_io (4)
-[c1/2715b9] Submitted process > basic_io (1)
+[09/91674f] Submitted process > basic_io (5)
+[e6/3f8436] Submitted process > basic_io (4)
+[20/588bb4] Submitted process > basic_io (3)
+[f7/01399a] Submitted process > basic_io (2)
+[57/692345] Submitted process > basic_io (1)
 ```
 
 <br/>
