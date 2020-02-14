@@ -98,7 +98,7 @@ trap 'exit ${ret:=$?}' EXIT
 touch .command.trace
 start_millis=$(nxf_date)
 (
-/bin/bash -ue /rdsgpfs/general/user/ywan1/home/qc/work/12/04a2439657919dbaf5d27b1b70402a/.command.sh
+/bin/bash -ue /rdsgpfs/general/user/ywan1/home/qc/work/28/f8bc0e1faa083d2a2735563dec476e/.command.sh
 ) &
 pid=$!
 nxf_trace "$pid" .command.trace &

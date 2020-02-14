@@ -42,7 +42,7 @@ This demonstration involves the following new features that I had not explored b
 - Run Nextflow pipelines under a screen session
 - Run Shell command lines with user-specified parameters
 
-
+*Note that the `pbspro` executor must be used instead of `pbs` in order to avoid an error message from `qstat` (see [Issue 1106](https://github.com/nextflow-io/nextflow/issues/1106) of Nextflow).*
 
 ```bash
 # This time, I run Nextflow in a screen session, for which the following command is
@@ -56,12 +56,12 @@ $ nextflow run qc1.nf --fastq "*_{1,2}.fastq.gz" --trimSlidingWindow "5:20" --tr
 $ nextflow run qc1.nf --fastq "*_{1,2}.fastq.gz" --trimSlidingWindow "5:20" --trimMinLength 50 -profile pbs_conf -with-report qc1_report.html -with-trace
 
 N E X T F L O W  ~  version 19.01.0
-Launching `qc1.nf` [sad_khorana] - revision: ae273cea88
-[warm up] executor > pbs
-[8e/3c50c5] Submitted process > trimmomatic (1)
-[b7/271267] Submitted process > fastqc (2)
-[8d/f44922] Submitted process > fastqc (1)
-[6b/eb77ce] Submitted process > trimmomatic (2)
+Launching `qc1.nf` [scruffy_caravaggio] - revision: 3701cc42b0
+[warm up] executor > pbspro
+[bd/933266] Submitted process > fastqc (2)
+[28/f8bc0e] Submitted process > trimmomatic (1)
+[7c/f9b919] Submitted process > trimmomatic (2)
+[8a/87e42d] Submitted process > fastqc (1)
 
 # Check queue status outside of the screen session before these jobs were launched
 $ qstat
@@ -71,6 +71,10 @@ $ qstat
 1073040        Throughput      nf-fastqc_2          Queued   no start time estimate yet
 1073041        Throughput      nf-fastqc_1          Queued   no start time estimate yet
 1073042        Throughput      nf-trimmomatic_      Queued   no start time estimate yet
+
+# Show PBS version
+$ qstat --version
+pbs_version = 18.2.3.20181206140456
 ```
 
 **Structure of output files**
@@ -103,61 +107,17 @@ $ ls -1 -R -a work
 work:
 .
 ..
-12
-22
-58
-74
+28
+7c
+8a
+bd
 
-work/12:
+work/28:
 .
 ..
-04a2439657919dbaf5d27b1b70402a
+f8bc0e1faa083d2a2735563dec476e
 
-work/12/04a2439657919dbaf5d27b1b70402a:
-.
-..
-.command.begin
-.command.err
-.command.log
-.command.out
-.command.run
-.command.sh
-.command.stub
-.command.trace
-ERR137805_1.fastq.gz
-ERR137805_2.fastq.gz
-.exitcode
-
-work/22:
-.
-..
-123a9f82b505b70f8a0c322e5f9adf
-
-work/22/123a9f82b505b70f8a0c322e5f9adf:
-.
-..
-.command.begin
-.command.err
-.command.log
-.command.out
-.command.run
-.command.sh
-.command.stub
-.command.trace
-ERR137805_1.fastq.gz
-ERR137805_2.fastq.gz
-ERR137805_paired_1.fastq.gz
-ERR137805_paired_2.fastq.gz
-ERR137805_unpaired_1.fastq.gz
-ERR137805_unpaired_2.fastq.gz
-.exitcode
-
-work/58:
-.
-..
-807ce8f8c0617fd9df0b6a31973014
-
-work/58/807ce8f8c0617fd9df0b6a31973014:
+work/28/f8bc0e1faa083d2a2735563dec476e:
 .
 ..
 .command.begin
@@ -176,12 +136,56 @@ ERR134515_unpaired_1.fastq.gz
 ERR134515_unpaired_2.fastq.gz
 .exitcode
 
-work/74:
+work/7c:
 .
 ..
-dd7cadf0e36703f9379b85e91fc742
+f9b9191577505634de986f7cf9f7b4
 
-work/74/dd7cadf0e36703f9379b85e91fc742:
+work/7c/f9b9191577505634de986f7cf9f7b4:
+.
+..
+.command.begin
+.command.err
+.command.log
+.command.out
+.command.run
+.command.sh
+.command.stub
+.command.trace
+ERR137805_1.fastq.gz
+ERR137805_2.fastq.gz
+ERR137805_paired_1.fastq.gz
+ERR137805_paired_2.fastq.gz
+ERR137805_unpaired_1.fastq.gz
+ERR137805_unpaired_2.fastq.gz
+.exitcode
+
+work/8a:
+.
+..
+87e42ddd68301a5637310d13e7f6b3
+
+work/8a/87e42ddd68301a5637310d13e7f6b3:
+.
+..
+.command.begin
+.command.err
+.command.log
+.command.out
+.command.run
+.command.sh
+.command.stub
+.command.trace
+ERR137805_1.fastq.gz
+ERR137805_2.fastq.gz
+.exitcode
+
+work/bd:
+.
+..
+933266ae86193f1b21553685470e24
+
+work/bd/933266ae86193f1b21553685470e24:
 .
 ..
 .command.begin
