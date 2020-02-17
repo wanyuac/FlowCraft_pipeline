@@ -1,0 +1,5 @@
+task_id	hash	process	tag	status	exit	start	cpus	time	disk	memory	duration	realtime	%cpu	%mem
+1	fe/d91b32	trimmomatic	-	COMPLETED	0	2020-02-17 13:42:06.797	1	-	-	-	57.1s	55.7s	721.9%	0.7%
+2	08/9210a7	trimmomatic	-	COMPLETED	0	2020-02-17 13:42:06.801	1	-	-	-	1m 43s	1m 43s	756.7%	0.7%
+3	6f/6e42ae	fastqc	-	COMPLETED	0	2020-02-17 13:43:03.943	1	-	-	-	56.5s	51.4s	236.9%	0.2%
+4	30/7ec864	fastqc	-	COMPLETED	0	2020-02-17 13:43:50.303	1	-	-	-	1m 22s	1m 21s	473.0%	0.2%
