@@ -68,10 +68,16 @@ process fastqc {
     /*
       Waits until all output files from FastQC are generated.
       See https://github.com/nextflow-io/patterns/blob/master/docs/process-collect.adoc
+      
+      The pattern for publishDir must be the same as that in the defined output. Otherwise, actions
+      following publishDir does not work. For example, we cannot define pattern "*.html* for publishDir
+      while define file "*.zip" into fastqc_reports.
+      
+      In this process, probably using the mv command in the script block makes things easier.
     */
     
     publishDir path: "${fastqc_outdir}",
-    pattern: "*__paired_{1,2}_fastqc.*",
+    pattern: "*__paired_?_fastqc.*",
     mode: "copy",
     saveAs: { filename -> filename.replaceAll(/__paired/, "") },
     overwrite: true
@@ -80,7 +86,7 @@ process fastqc {
     set genome_id, file(paired_fastq) from trimmed_fastqs  // This process runs for every set in parallel, similar to R's apply function.
     
     output:
-    file "*__paired_{1,2}_fastqc.zip" into fastqc_reports
+    file "*__paired_?_fastqc.*" into fastqc_reports  // Multiple output files
     
     script:
     """
@@ -99,7 +105,7 @@ process multiqc {  // Terminal process
       to run only once.      
     */
     input:
-    file zip_file from fastqc_reports.last()
+    file single_file from fastqc_reports.last()
     
     script:
     """
