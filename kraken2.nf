@@ -16,10 +16,11 @@ Licensed under the GNU General Public License v3.0
 Publication: 24/3/2020
 */
 
-def out_dir = new File(params.outdir)
-if ( !out_dir.exists() ) {
-    result = out_dir.mkdir()
-    println result ? "Successfully created directory ${out_dir}" : "Cannot create directory: ${out_dir}"
+def out_dir = new File(params.outdir) {
+    if ( !out_dir.exists() ) {
+        result = out_dir.mkdir()
+        println result ? "Successfully created directory ${out_dir}" : "Cannot create directory: ${out_dir}"
+    }   
 }
 
 Channel.fromFilePairs(params.fastq).set { read_sets }
