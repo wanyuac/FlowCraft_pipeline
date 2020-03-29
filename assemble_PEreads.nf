@@ -69,6 +69,6 @@ process Prokka {
         export PERL5LIB=\$perl5_env
     fi
     export PATH=${params.prokka}:\$PATH
-    ${params.prokka}/prokka --cpus 8 --outdir ${annot_dir} --prefix $genome ${params.globalProkkaParams} --strain $genome --proteins ${params.proteinFile} $fasta
+    ${params.prokka}/prokka --cpus 8 --quiet --outdir ${annot_dir} --prefix $genome ${params.globalProkkaParams} --strain $genome --proteins ${params.proteinFile} $fasta
     """
 }
