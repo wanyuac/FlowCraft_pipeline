@@ -6,15 +6,15 @@ Assemble Illumina short reads using Unicycler and annotate genomes using Prokka.
 [Use guide]
 To run this pipeline in a screen session:
     nextflow -Djava.io.tmpdir=$PWD run assemble_PEreads.nf --queueSize 25 --fastq "./reads/*_{1,2}.fastq.gz" \
-                              --assemblyDir assembly --annotDir annot --proteinFile proteins.faa \
-                              --globalProkkaParams '--force --addgenes --kingdom Bacteria --genus Escherichia --species coli --gcode 11 --rfam' \
+                              --assemblyDir assembly --annotDir annot \
+                              --globalProkkaParams '--force --addgenes --kingdom Bacteria --genus Escherichia --species coli --gcode 11 --rfam --proteins 'proteins.faa' \
                               --condaUnicycler "$HOME/anaconda3/envs/unicycler" --condaProkka "$HOME/anaconda3/envs/prokka"
                               -c assemble_PEreads.config -profile pbs
 
 [Declaration]
 Copyright (C) 2020 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public License v3.0
-Publication: 28/03/2020
+Publication: 30/03/2020
 */
 
 def mkdir(dir_path) {
@@ -50,7 +50,7 @@ process Unicycler {
     
     script:    
     """
-    export PATH=${params.unicycler}:\$PATH
+    export PATH=${params.unicycler}:\${PATH}
     ${params.unicycler}/unicycler --short1 ${paired_fastq[0]} --short2 ${paired_fastq[1]} --no_correct --mode normal --threads 8 --keep 0 --out .
     cp assembly.fasta ${assembly_dir}/${genome}.fasta
     mv assembly.gfa ${assembly_dir}/${genome}.gfa
@@ -59,6 +59,12 @@ process Unicycler {
 }
 
 process Prokka {
+    /*
+    Cannot set Prokka's output directory to the same folder:
+    https://github.com/tseemann/prokka/issues/379
+    Use --proteins rather than --usegenus is recommended.
+    */
+    
     input:
     set genome, file(fasta) from assemblies
     
@@ -68,7 +74,9 @@ process Prokka {
     if [ ! -z "\${perl5_env}" ]; then
         export PERL5LIB=\$perl5_env
     fi
-    export PATH=${params.prokka}:\$PATH
-    ${params.prokka}/prokka --cpus 8 --quiet --outdir ${annot_dir} --prefix $genome ${params.globalProkkaParams} --strain $genome --proteins ${params.proteinFile} $fasta
+    export PATH=${params.prokka}:\${PATH}
+    echo "New PATH variable is: \${PATH}"
+    ${params.prokka}/prokka --cpus 8 --quiet --outdir . --prefix $genome --strain $genome ${params.globalProkkaParams} $fasta
+    mv ${genome}.* ${annot_dir}/
     """
 }
