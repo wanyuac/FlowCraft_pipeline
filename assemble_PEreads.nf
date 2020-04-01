@@ -14,7 +14,7 @@ To run this pipeline in a screen session:
 [Declaration]
 Copyright (C) 2020 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public License v3.0
-Publication: 30/03/2020
+Publication: 30/03/2020; lastest modification: 1/4/2020
 */
 
 def mkdir(dir_path) {
@@ -39,7 +39,7 @@ annot_dir = mkdir(params.annotDir)
 /*
 Import FASTQ files
 */
-Channel.fromFilePairs(params.fastq).set { read_sets }.println()
+read_sets = Channel.fromFilePairs(params.fastq)
 
 process Unicycler {    
     input:
@@ -75,7 +75,6 @@ process Prokka {
         export PERL5LIB=\$perl5_env
     fi
     export PATH=${params.prokka}:\${PATH}
-    echo "New PATH variable is: \${PATH}"
     ${params.prokka}/prokka --cpus 8 --quiet --outdir . --prefix $genome --strain $genome ${params.globalProkkaParams} $fasta
     mv ${genome}.* ${annot_dir}/
     """

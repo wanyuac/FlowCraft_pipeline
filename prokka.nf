@@ -42,6 +42,7 @@ process Prokka {
     /*
     Cannot set Prokka's output directory to the same folder:
     https://github.com/tseemann/prokka/issues/379
+    Use --proteins rather than --usegenus is recommended.
     */
 
     input:
