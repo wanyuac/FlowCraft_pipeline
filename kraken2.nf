@@ -26,7 +26,11 @@ if ( !out_dir.exists() ) {
 read_sets = Channel.fromFilePairs(params.fastq)
 
 process kraken2 {
-    // Somehow the PublishDir command does not work for a terminal process.
+    /*
+    The "publishDir" statement must be accompanied by the declaration of output in the process in order
+    to copy/move output files into the right output directory. Nothing happens if the output is not
+    defined even though this is a terminal process.
+    */
     publishDir path: "${out_dir}", pattern: "*.txt", mode: "copy", overwrite: true
     
     input:
@@ -40,5 +44,4 @@ process kraken2 {
     """
     ${params.kraken2Dir}/kraken2 -db ${params.db} --paired --threads 4 --gzip-compressed --output ${genome}.kraken --report ${genome}.txt --classified-out "${genome}_known#.fastq" --unclassified-out "${genome}_unknown#.fastq" ${paired_fastq}
     """
-    //mv ${genome}.txt ${out_dir}
 }
