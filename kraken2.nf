@@ -13,29 +13,32 @@ the first item in the file list provided by --fastq ./reads/*_{1,2}.fastq.gz, ca
 [Declarations]
 Copyright (C) 2020 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public License v3.0
-Publication: 24/3/2020
+Publication: 24 Mar 2020; last modification: 5 Apr 2020
 */
 
-def out_dir = new File(params.outdir) {
-    if ( !out_dir.exists() ) {
-        result = out_dir.mkdir()
-        println result ? "Successfully created directory ${out_dir}" : "Cannot create directory: ${out_dir}"
-    }   
+def out_dir = new File(params.outdir)
+
+if ( !out_dir.exists() ) {
+    result = out_dir.mkdir()
+    println result ? "Successfully created directory ${out_dir}" : "Cannot create directory: ${out_dir}"
 }
 
-Channel.fromFilePairs(params.fastq).set { read_sets }
+read_sets = Channel.fromFilePairs(params.fastq)
 
 process kraken2 {
     // Somehow the PublishDir command does not work for a terminal process.
-    // publishDir path: "${params.outdir}", pattern: "*.txt", mode: "move", overwrite: true
+    publishDir path: "${out_dir}", pattern: "*.txt", mode: "copy", overwrite: true
     
     input:
     set genome, file(paired_fastq) from read_sets
+    
+    output:
+    file("*.txt") into outputs
     
     script:
     
     """
     ${params.kraken2Dir}/kraken2 -db ${params.db} --paired --threads 4 --gzip-compressed --output ${genome}.kraken --report ${genome}.txt --classified-out "${genome}_known#.fastq" --unclassified-out "${genome}_unknown#.fastq" ${paired_fastq}
-    mv ${genome}.txt ${out_dir}
     """
+    //mv ${genome}.txt ${out_dir}
 }
