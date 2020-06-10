@@ -55,7 +55,8 @@ process Prokka {
         export PERL5LIB=\$perl5_env
     fi
     export PATH=${params.prokka}:\${PATH}
-    ${params.prokka}/prokka --cpus 8 --quiet --outdir . --prefix $genome --strain $genome ${params.globalProkkaParams} $fasta
+    ${params.prokka}/prokka --cpus 4 --quiet --outdir . --prefix $genome --strain $genome ${params.globalProkkaParams} $fasta
+    unlink `basename ${fasta}`
     mv ${genome}.* ${annot_dir}/
     """
 }
