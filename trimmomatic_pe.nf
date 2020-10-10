@@ -4,19 +4,19 @@
 [Use guide]
 Structure of output directories:
     ./    where this pipeline is run
-    ./trimmed    processed paired reads
-    ./trimmed/fastqc    FastQC reports about paired reads
-    ./trimmed/multiqc    MultiQC report
+    ./[outdir]    processed paired reads
+    ./[outdir]/fastqc    FastQC reports about paired reads
+    ./[outdir]/multiqc    MultiQC report
 
 Recommend to run the following command in a screen session:
-    nextflow run trimmomatic.nf --outdir "./trimmed" --fastq "./reads/*_{1,2}.fastq.gz" --slidingWindow "5:30" --minLen 50 --maxLen 250 -profile pbs
+    nextflow run trimmomatic.nf --outdir "./trimmed" --fastq "./reads/*_{1,2}.fastq.gz" --slidingWindow "5:30" --minLen 50 --maxLen 250 --queueSize 35 -profile pbs
 
-Users may want to adjust queue parameters in trimmomatic_pe.config for their analyses. This pipeline assumes a queue size of 15.
+Users may want to adjust queue parameters in trimmomatic_pe.config for their analyses. This pipeline uses a default queue size of 20.
 
 [Declarations]
 Copyright (C) 2020 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public License v3.0
-Publication: 27/2/2020; last modification: 17/3/2020
+Publication: 27/2/2020; last modification: 10/10/2020
 */
 
 
@@ -41,11 +41,14 @@ if ( !multiqc_outdir.exists() ) {
 
 
 /*********** Defining the input channel ***********/
-Channel.fromFilePairs(params.fastq).set { read_sets }  // Save FASTQ file objects into read_sets
+Channel
+    .fromFilePairs(params.fastq)
+    .set { read_sets }  // Save FASTQ file objects into read_sets
 
 
 /*********** Launching individual processes ***********/
 process trimmomatic {
+    /* Copy processed paired reads to the output directory and remove "__paired" from filenames */
     publishDir path: "${params.outdir}",
     pattern: "*__paired_{1,2}.fastq.gz",
     mode: "copy",
@@ -59,8 +62,33 @@ process trimmomatic {
     set genome_id, file("*__paired_{1,2}.fastq.gz") into trimmed_fastqs  // Feed a set into the channel. Files to be moved to the publishDir
     
     script:
+    action_added = 0
+    if ( params.maxLen > 0 ) {
+        actions = "CROP:${params.maxLen}"
+        action_added = 1
+        println "$actions"
+    }
+    if ( params.slidingWindow != null ) {  // Returns true when this parameter is not null or empty.
+        if ( action_added > 0) {
+            actions = actions + " SLIDINGWINDOW:${params.slidingWindow}"
+        } else {
+            actions = "SLIDINGWINDOW:${params.slidingWindow}"
+            action_added = 1
+        }
+        println "$actions"
+    }
+    if ( params.minLen > 0 ) {
+        if ( action_added > 0 ) {
+            actions = actions + " MINLEN:${params.minLen}"
+        } else {
+            actions = "MINLEN:${params.minLen}"
+            action_added = 1
+        }
+        println "$actions"
+    }
+
     """
-    java -Xmx4g -jar ${params.trimmomaticDir}/trimmomatic.jar PE -phred33 -threads 2 ${paired_fastq} ${genome_id}__paired_1.fastq.gz ${genome_id}__unpaired_1.fastq.gz ${genome_id}__paired_2.fastq.gz ${genome_id}__unpaired_2.fastq.gz CROP:${params.maxLen} SLIDINGWINDOW:${params.slidingWindow} MINLEN:${params.minLen}
+    java -Xmx4g -jar ${params.trimmomaticDir}/trimmomatic.jar PE -phred33 -threads 2 ${paired_fastq} ${genome_id}__paired_1.fastq.gz ${genome_id}__unpaired_1.fastq.gz ${genome_id}__paired_2.fastq.gz ${genome_id}__unpaired_2.fastq.gz ${actions}
     """
 }
     
