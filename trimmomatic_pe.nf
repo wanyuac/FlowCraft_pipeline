@@ -16,7 +16,7 @@ Users may want to adjust queue parameters in trimmomatic_pe.config for their ana
 [Declarations]
 Copyright (C) 2020 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public License v3.0
-Publication: 27/2/2020; last modification: 10/10/2020
+Publication: 27/2/2020; last modification: 11/10/2020
 */
 
 
@@ -136,8 +136,12 @@ process multiqc {  // Terminal process
     file single_file from fastqc_reports.last()
     
     script:
+    /*
+    Since the bash script is run under the current working directory rather than where the pipeline was launched,
+    ${fastqc_outdir} causes a failure of directory absence if a relative path is used for parameter "outdir".
+    */
     """
-    ${params.multiqcDir}/multiqc ${fastqc_outdir}
+    ${params.multiqcDir}/multiqc ${workflow.launchDir}/${fastqc_outdir}
     mv multiqc_data ${multiqc_outdir}
     mv multiqc_report.html ${multiqc_outdir}
     """
