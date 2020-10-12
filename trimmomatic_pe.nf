@@ -142,7 +142,7 @@ process multiqc {  // Terminal process
     */
     """
     ${params.multiqcDir}/multiqc ${workflow.launchDir}/${fastqc_outdir}
-    mv multiqc_data ${multiqc_outdir}
-    mv multiqc_report.html ${multiqc_outdir}
+    mv multiqc_data ${workflow.launchDir}/${multiqc_outdir}
+    mv multiqc_report.html ${workflow.launchDir}/${multiqc_outdir}
     """
 }
