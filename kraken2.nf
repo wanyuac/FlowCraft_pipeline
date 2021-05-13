@@ -44,6 +44,6 @@ process kraken2 {
     
     // --output: classification output; --report: a summary tree of assigned taxonomy
     """
-    ${params.kraken2Dir}/kraken2 -db ${params.db} --paired --threads 4 --gzip-compressed --output ${genome}.kraken --report ${genome}.txt --classified-out "${genome}_known#.fastq" --unclassified-out "${genome}_unknown#.fastq" ${paired_fastq}
+    ${params.kraken2Dir}/kraken2 --db ${params.db} --paired --threads 4 --gzip-compressed --output ${genome}.kraken --report ${genome}.txt --classified-out "${genome}_known#.fastq" --unclassified-out "${genome}_unknown#.fastq" ${paired_fastq}
     """
 }
