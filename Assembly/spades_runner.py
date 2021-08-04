@@ -6,8 +6,9 @@ Notes:
     1. Dependencies: anaconda, Python >= 3.6 (for the use of f-strings)
     2. Users may need to edit this script for their HPCs. For example, renaming conda environments.
 
-Author: Yu Wan <wanyuac@126.com>
-First version: 18/3/2021; the latest update: 24/7/2021
+Copyright (C) 2021 Yu Wan <wanyuac@126.com>
+Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
+First version: 18 Mar 2021; the latest update: 5 Aug 2021
 """
 
 import os
@@ -20,7 +21,7 @@ from collections import namedtuple
 
 def parse_arguments():
     parser = ArgumentParser(description = "Launching SPAdes job using spades_runner.sge")
-    parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited file of three columns ID\\tRead_1\\tRead_2")
+    parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited, header-free file of three columns ID\\tRead_1\\tRead_2")
     parser.add_argument("--ncpus", "-n", dest = "ncpus", type = str, required = False, default = "8", help = "Number of computational cores to be requested (default: 8)")
     parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "16", help = "Memory size (GB) to be requested (default: 16)")
     parser.add_argument("--kmers", "-k", dest = "kmers", type = str, required = False, default = "21,33,55,77", help = "Comma-delimited k-mer sizes for SPAdes (default: '21,33,55,77')")
