@@ -26,7 +26,7 @@ def parse_arguments():
     parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited, header-free file of three columns ID\\tRead_1\\tRead_2")
     parser.add_argument("--db", "-b", dest = "db", type = str, required = True, help = "Path to the Kraken database")
     parser.add_argument("--ncpus", "-n", dest = "ncpus", type = str, required = False, default = "8", help = "Number of computational cores to be requested (default: 8)")
-    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "16", help = "Memory size (GB) to be requested (default: 16)")
+    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "64", help = "Memory size (GB) to be requested (default: 64)")
     parser.add_argument("--outdir", "-o", dest = "outdir", type = str, required = False, default = "output", help = "Parental output directory")
     parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 10, help = "Size of each serial job queue")
     parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS)")
