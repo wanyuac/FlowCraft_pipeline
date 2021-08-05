@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 """
-Submit kraken2 jobs to an HPC for taxonomical check. Supports SGE and PBS job schedulers. This script does
-not require kraken2 to produce classified or unclassified reads or kraken files.
+Submit GeneFinder jobs to an HPC (https://github.com/phe-bioinformatics/gene_finder). The script supports SGE and PBS job schedulers.
 
 Notes:
     1. Dependencies: anaconda, Python >= 3.6 (for the use of f-strings)
@@ -24,9 +23,8 @@ from spades_runner import import_readsets, check_dir, write_job_script  # Reuse 
 def parse_arguments():
     parser = ArgumentParser(description = "Launching SPAdes job using spades_runner.sge")
     parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited, header-free file of three columns ID\\tRead_1\\tRead_2")
-    parser.add_argument("--db", "-b", dest = "db", type = str, required = True, help = "Path to the Kraken database")
-    parser.add_argument("--ncpus", "-n", dest = "ncpus", type = str, required = False, default = "8", help = "Number of computational cores to be requested (default: 8)")
-    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "64", help = "Memory size (GB) to be requested (default: 64)")
+    parser.add_argument("--db", "-b", dest = "db", type = str, required = True, help = "Path to a GeneFinder reference database")
+    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "8", help = "Memory size (GB) to be requested (default: 8)")
     parser.add_argument("--outdir", "-o", dest = "outdir", type = str, required = False, default = "output", help = "Parental output directory")
     parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 10, help = "Size of each serial job queue")
     parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS)")
@@ -48,14 +46,14 @@ def main():
         queue.append(i)
         if k == args.queue:  # When the current queue becomes full
             n += 1
-            scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db, args.ncpus,\
+            scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db,\
                                                               args.mem, args.outdir, args.scheduler),\
                            k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
             queue = list()
             k = 0
     if k > 0:  # When there are remaining tasks in the last queue.
         n += 1
-        scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db, args.ncpus,\
+        scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db,\
                                                           args.mem, args.outdir, args.scheduler),\
                        k, n, args.outdir, args.scheduler))
     if submit:
@@ -66,43 +64,57 @@ def main():
     return
 
 
-def create_job_script(readsets, db, ncpus, mem, outdir, scheduler):
+def create_job_script(readsets, db, mem, outdir, scheduler):
     outdir = os.path.abspath(outdir)
     if scheduler == "SGE":
         script = f"""#!/bin/bash
 # SGE configurations
-#$ -N kraken2
+#$ -N GeneFinder
 #$ -S /bin/bash
-#$ -pe multithread {ncpus}
 #$ -l h_vmem={mem}G
 
 # Environmental settings
 source $HOME/.bash_profile
 source /etc/profile.d/modules.sh
 module purge
-module load anaconda/5.3.1_python3
-conda activate kraken
+module load phe/gene_finder/2-2
+cd {outdir}
 
 # Kraken2 jobs"""
     else:  # PBS job script
         script = f"""#!/bin/bash
 # PBS configurations
-#PBS -N kraken
+#PBS -N GeneFinder
 #PBS -j oe
-#PBS -l select=1:ncpus={ncpus}:mem={mem}gb:ompthreads={ncpus}
+#PBS -l select=1:ncpus=1:mem={mem}gb
 #PBS -l walltime=24:00:00
 
 # Environmental settings
-module load anaconda3/personal
-source activate kraken
+module load phe/gene_finder/2-2
+cd {outdir}
 
 # kraken2 jobs"""
 
     genomes = list(readsets.keys())
     for g in genomes:
         reads = readsets[g]
-        report = os.path.join(outdir, g + ".txt")
-        script += f"""\nkraken2 --db {db} --paired --gzip-compressed --threads {ncpus} --output - --report {report} {reads.r1} {reads.r2}"""
+        script += f"""\ngene_finder.py -1 {reads.r1} -2 {reads.r2} -output_directory {g} --gene_file_directory {db}"""
+    
+    script += """\n
+# Move output files
+cd %s
+genomes=(%s)
+
+for g in ${genomes[@]}
+do
+    if [ -f "$g/${g}_1.results.xml" ]
+    then
+        mv $g/${g}_1.results.xml ${g}.xml
+    else
+        echo "Warning: GeneFinder result of isolate $g was not found."
+    fi
+done
+""" % (outdir, " ".join(genomes))
     return script
 
 
