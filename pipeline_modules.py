@@ -20,12 +20,13 @@ def import_readsets(r):
     with open(r, "r") as f:
         lines = f.read().splitlines()
         for line in lines:
-            try:
-                i, r_1, r_2 = line.split("\t")
-            except ValueError:
-                print("Error: line '%s' in the readset specification file cannot be correctly parsed." % line, file = sys.stderr)
-                sys.exit(1)
-            readsets[i] = Readset(r1 = r_1, r2 = r_2)
+            if line != '':
+                try:
+                    i, r_1, r_2 = line.split("\t")
+                except ValueError:
+                    print("Error: line '%s' in the readset specification file cannot be correctly parsed." % line, file = sys.stderr)
+                    sys.exit(1)
+                readsets[i] = Readset(r1 = r_1, r2 = r_2)
     return readsets
 
 
