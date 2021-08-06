@@ -7,6 +7,9 @@ Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
 First version: 6 Aug 2021; the latest update: 6 Aug 2021
 """
+import os
+import sys
+from collections import namedtuple
 
 def import_readsets(r):
     Readset = namedtuple("Readset", ["r1", "r2"])  # One genome per object

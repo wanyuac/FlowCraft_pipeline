@@ -8,7 +8,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 18 Mar 2021; the latest update: 5 Aug 2021
+First version: 18 Mar 2021; the latest update: 6 Aug 2021
 """
 
 import os
@@ -16,7 +16,6 @@ import sys
 import time
 import subprocess
 from argparse import ArgumentParser
-from collections import namedtuple
 from pipeline_modules import import_readsets, check_dir, write_job_script
 
 
