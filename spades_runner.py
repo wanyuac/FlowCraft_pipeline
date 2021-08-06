@@ -17,6 +17,7 @@ import time
 import subprocess
 from argparse import ArgumentParser
 from collections import namedtuple
+from pipeline_modules import import_readsets, check_dir, write_job_script
 
 
 def parse_arguments():
@@ -65,30 +66,6 @@ def main():
             #print(stdout, file = sys.stdout)
             #print(stderr, file = sys.stderr)
             time.sleep(1)
-    return
-
-
-def import_readsets(r):
-    Readset = namedtuple("Readset", ["r1", "r2"])  # One genome per object
-    readsets = dict()
-    if not os.path.exists(r):
-        print("Error: Input file " + r + " is not accessible.", file = sys.stderr)
-        sys.exit(1)
-    with open(r, "r") as f:
-        lines = f.read().splitlines()
-        for line in lines:
-            try:
-                i, r_1, r_2 = line.split("\t")
-            except ValueError:
-                print("Error: line '%s' in the readset specification file cannot be correctly parsed." % line, file = sys.stderr)
-                sys.exit(1)
-            readsets[i] = Readset(r1 = r_1, r2 = r_2)
-    return readsets
-
-
-def check_dir(d):
-    if not os.path.exists(d):
-        os.mkdir(d)
     return
 
 
@@ -155,16 +132,6 @@ do
 done
 """ % (outdir, " ".join(genomes))  # This command line cannot use the f-string because of the braces used in the string.
     return script
-
-
-def write_job_script(script, k, i, out, scheduler):
-    """ Returns the path of the output script """
-    filename_ext = ".sge" if scheduler == "SGE" else ".pbs"
-    f_name = os.path.join(out, "job_list_" + str(i) + filename_ext)  # In the future, the filename extension will be determined by the job scheduler.
-    print("Write %i tasks into script %s" % (k, f_name))
-    with open(f_name, "w") as f:
-        f.write(script)
-    return f_name
 
 
 if __name__ == "__main__":

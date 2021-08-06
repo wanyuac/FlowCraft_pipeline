@@ -17,7 +17,7 @@ import time
 import subprocess
 from argparse import ArgumentParser
 from collections import namedtuple
-from spades_runner import import_readsets, check_dir, write_job_script  # Reuse functions in spades_runner.py
+from pipeline_modules import import_readsets, check_dir, write_job_script
 
 
 def parse_arguments():
