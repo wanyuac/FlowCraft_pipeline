@@ -12,7 +12,7 @@ Note:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 6 Aug 2021; the latest update: 6 Aug 2021
+First version: 6 Aug 2021; the latest update: 8 Aug 2021
 """
 
 import os
@@ -29,7 +29,7 @@ def parse_argument():
 
 def main():
     args = parse_argument()
-    print('\t'.join(['Isolate', 'Allele', 'Description', 'Certainty', 'Identity', 'Coverage', 'Coverage_distr', 'Depth', 'Mode',\
+    print('\t'.join(['Isolate', 'Gene', 'Allele', 'Description', 'Certainty', 'Identity', 'Coverage', 'Coverage_distr', 'Depth', 'Mode',\
           'Report_type', 'DB_index', 'Alteration', 'Insertion', 'Deletion', 'Mix', 'Large_indel', 'Mismatch']), file = sys.stdout)
     for x in args.input:
         if os.path.exists(x):
@@ -40,6 +40,7 @@ def main():
             results = xml_root[1][2 : ]  # Skip the first two entries: 'coverage_control' and 'mix_indicator'.
             for result in results:  # Each result (<result>) is an object of class 'xml.etree.ElementTree.Element'.
                 allele = result.attrib['value']
+                gene = allele.split('_')[0]  # GeneFinder interprets the underscore as the an indicator of an allele name.
                 result_values = {'mode' : 'NA', 'alterations' : 'NA', 'detection' : 'NA', 'description' : 'NA', 'report_type' : 'NA',\
                                  'coverage' : 'NA', 'homology' : 'NA', 'depth' : 'NA', 'coverage_distribution' : 'NA', 'insertions' : 'NA',\
                                  'deletions' : 'NA', 'mix' : 'NA', 'large_indels' : 'NA', 'mismatch' : 'NA', 'modifications' : 'NA'}
@@ -61,7 +62,7 @@ def main():
                         sys.exit(1)
                     if result_values['mode'] == 'regulator':
                         result_values['alterations'] = result_values['modifications']  # It weird that for regulatory genes, there is no 'alterations' attribute but 'modifications'.
-                    print('\t'.join([sample, allele, result_values['description'], result_values['detection'], result_values['homology'],\
+                    print('\t'.join([sample, gene, allele, result_values['description'], result_values['detection'], result_values['homology'],\
                                      result_values['coverage'], result_values['coverage_distribution'], result_values['depth'], result_values['mode'],\
                                      report_type, index, result_values['alterations'], result_values['insertions'], result_values['deletions'],\
                                      result_values['mix'], result_values['large_indels'], result_values['mismatch']]), file = sys.stdout)
