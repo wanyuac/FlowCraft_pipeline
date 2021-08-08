@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 """
-Submit kraken2 jobs to an HPC for taxonomical check. Supports SGE and PBS job schedulers. This script does
-not require kraken2 to produce classified or unclassified reads or kraken files.
+Submit PHEnix jobs to an HPC (https://github.com/phe-bioinformatics/PHEnix). The script supports SGE and PBS job schedulers.
 
 Notes:
     1. Dependencies: anaconda, Python >= 3.6 (for the use of f-strings)
@@ -9,7 +8,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 5 Aug 2021; the latest update: 6 Aug 2021
+First version: 8 Aug 2021; the latest update: 8 Aug 2021
 """
 
 import os
@@ -21,13 +20,18 @@ from pipeline_modules import import_readsets, check_dir, write_job_script
 
 
 def parse_arguments():
-    parser = ArgumentParser(description = "Submit Kraken2 jobs to the HPC")
+    parser = ArgumentParser(description = "Submit PHEnix jobs to the HPC")
+    
+    # Software arguments
     parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited, header-free file of three columns ID\\tRead_1\\tRead_2")
-    parser.add_argument("--db", "-b", dest = "db", type = str, required = True, help = "Path to the Kraken database")
+    parser.add_argument("--ref", "-e", dest = "ref", type = str, required = True, help = "Path to a reference FASTA file (Run phenix.py prepare_reference first)")
+    parser.add_argument("--filters", "-f", dest = "filters", type = str, required = False, default = "qual_score:30,min_depth:10,mq_score:30,ad_ratio:0.9", help = "Quality filters for variant calling")
     parser.add_argument("--outdir", "-o", dest = "outdir", type = str, required = False, default = "output", help = "Parental output directory")
-    parser.add_argument("--ncpus", "-n", dest = "ncpus", type = str, required = False, default = "8", help = "Number of computational cores to be requested (default: 8)")
-    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "64", help = "Memory size (GB) to be requested (default: 64)")
-    parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 10, help = "Size of each serial job queue")
+    parser.add_argument("--keep_temp", "-k", dest = "keep_temp", action = "store_true", help = "Keep temporary files")
+    
+    # Job arguments
+    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "16", help = "Memory size (GB) to be requested (default: 16)")
+    parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 20, help = "Size of each serial job queue")
     parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS); default: SGE")
     parser.add_argument("--debug", "-d", dest = "debug", action = "store_true", help = "Only generate job script but do not submit it")
     return parser.parse_args()
@@ -40,6 +44,7 @@ def main():
     check_dir(args.outdir)
     queue = list()
     scripts = list()
+    other_args = "--json --keep-temp" if args.keep_temp else "--json"
     k = 0  # Counter of genomes of a queue
     n = 0  # Number of scripts to be written
     for i in readsets.keys():  # Create and submit scripts of serial jobs based on args.queue
@@ -47,14 +52,14 @@ def main():
         queue.append(i)
         if k == args.queue:  # When the current queue becomes full
             n += 1
-            scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db, args.ncpus,\
-                                                              args.mem, args.outdir, args.scheduler), k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
+            scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.ref, args.filters, args.mem,\
+                                                              args.outdir, args.scheduler, other_args), k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
             queue = list()
             k = 0
     if k > 0:  # When there are remaining tasks in the last queue.
         n += 1
-        scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db, args.ncpus,\
-                                                          args.mem, args.outdir, args.scheduler), k, n, args.outdir, args.scheduler))
+        scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.ref, args.filters, args.mem,\
+                                                           args.outdir, args.scheduler, other_args), k, n, args.outdir, args.scheduler))
     if submit:
         for s in scripts:
             print("Submit job script " + s, file = sys.stdout)
@@ -63,42 +68,37 @@ def main():
     return
 
 
-def create_job_script(readsets, db, ncpus, mem, outdir, scheduler):
+def create_job_script(readsets, ref, filters, mem, outdir, scheduler, other_args):
     outdir = os.path.abspath(outdir)
     if scheduler == "SGE":
         script = f"""#!/bin/bash
 # SGE configurations
-#$ -N kraken2
+#$ -N PHEnix
 #$ -S /bin/bash
-#$ -pe multithread {ncpus}
 #$ -l h_vmem={mem}G
 
 # Environmental settings
 source $HOME/.bash_profile
 source /etc/profile.d/modules.sh
 module purge
-module load anaconda/5.3.1_python3
-conda activate kraken
+module load snp_pipeline/1-4-3
 
-# Kraken2 jobs"""
+# PHEnix jobs"""
     else:  # PBS job script
         script = f"""#!/bin/bash
 # PBS configurations
-#PBS -N kraken
-#PBS -l select=1:ncpus={ncpus}:mem={mem}gb:ompthreads={ncpus}
+#PBS -N PHEnix
+#PBS -l select=1:ncpus=1:mem={mem}gb
 #PBS -l walltime=24:00:00
 
 # Environmental settings
-module load anaconda3/personal
-source activate kraken
+module load snp_pipeline/1-4-3
 
-# Kraken2 jobs"""
-
+# PHEnix jobs"""
     genomes = list(readsets.keys())
     for g in genomes:
         reads = readsets[g]
-        report = os.path.join(outdir, g + ".txt")
-        script += f"""\nkraken2 --db {db} --paired --gzip-compressed --threads {ncpus} --output - --report {report} {reads.r1} {reads.r2}"""
+        script += f"""\nphenix.py run_snp_pipeline -r1 {reads.r1} -r2 {reads.r2} --reference {ref} --sample-name {g} --mapper bwa --variant gatk --filters '{filters}' --outdir {outdir} {other_args}"""
     return script
 
 

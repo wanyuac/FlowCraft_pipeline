@@ -20,13 +20,13 @@ from pipeline_modules import import_readsets, check_dir, write_job_script
 
 
 def parse_arguments():
-    parser = ArgumentParser(description = "Launching SPAdes job using spades_runner.sge")
+    parser = ArgumentParser(description = "Submit GeneFinder jobs to the HPC")
     parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited, header-free file of three columns ID\\tRead_1\\tRead_2")
     parser.add_argument("--db", "-b", dest = "db", type = str, required = True, help = "Path to a GeneFinder reference database")
-    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "8", help = "Memory size (GB) to be requested (default: 8)")
     parser.add_argument("--outdir", "-o", dest = "outdir", type = str, required = False, default = "output", help = "Parental output directory")
+    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "8", help = "Memory size (GB) to be requested (default: 8)")
     parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 10, help = "Size of each serial job queue")
-    parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS)")
+    parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS); default: SGE")
     parser.add_argument("--debug", "-d", dest = "debug", action = "store_true", help = "Only generate job script but do not submit it")
     return parser.parse_args()
 
@@ -45,16 +45,14 @@ def main():
         queue.append(i)
         if k == args.queue:  # When the current queue becomes full
             n += 1
-            scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db,\
-                                                              args.mem, args.outdir, args.scheduler),\
-                           k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
+            scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db, args.mem, args.outdir, args.scheduler),\
+                                            k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
             queue = list()
             k = 0
     if k > 0:  # When there are remaining tasks in the last queue.
         n += 1
-        scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db,\
-                                                          args.mem, args.outdir, args.scheduler),\
-                       k, n, args.outdir, args.scheduler))
+        scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.db, args.mem, args.outdir, args.scheduler),\
+                                        k, n, args.outdir, args.scheduler))
     if submit:
         for s in scripts:
             print("Submit job script " + s, file = sys.stdout)
@@ -84,7 +82,6 @@ cd {outdir}
         script = f"""#!/bin/bash
 # PBS configurations
 #PBS -N GeneFinder
-#PBS -j oe
 #PBS -l select=1:ncpus=1:mem={mem}gb
 #PBS -l walltime=24:00:00
 

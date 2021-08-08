@@ -20,15 +20,15 @@ from pipeline_modules import import_readsets, check_dir, write_job_script
 
 
 def parse_arguments():
-    parser = ArgumentParser(description = "Launching SPAdes job using spades_runner.sge")
+    parser = ArgumentParser(description = "Submit SPAdes jobs to the HPC")
     parser.add_argument("--readsets", "-r", dest = "readsets", type = str, required = True, help = "A tab-delimited, header-free file of three columns ID\\tRead_1\\tRead_2")
-    parser.add_argument("--ncpus", "-n", dest = "ncpus", type = str, required = False, default = "8", help = "Number of computational cores to be requested (default: 8)")
-    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "16", help = "Memory size (GB) to be requested (default: 16)")
     parser.add_argument("--kmers", "-k", dest = "kmers", type = str, required = False, default = "21,33,55,77", help = "Comma-delimited k-mer sizes for SPAdes (default: '21,33,55,77')")
     parser.add_argument("--outdir", "-o", dest = "outdir", type = str, required = False, default = "output", help = "Parental output directory")
-    parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 10, help = "Size of each serial job queue")
-    parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS)")
     parser.add_argument("--highcov", "-hc", dest = "highcov", action = "store_true", help = "Set the flag when high-coverage multi-cell Illumina data is used as input (cf. SPAdes option '--isolate')")
+    parser.add_argument("--ncpus", "-n", dest = "ncpus", type = str, required = False, default = "8", help = "Number of computational cores to be requested (default: 8)")
+    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "16", help = "Memory size (GB) to be requested (default: 16)")
+    parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 10, help = "Size of each serial job queue")
+    parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS); default: SGE")
     parser.add_argument("--debug", "-d", dest = "debug", action = "store_true", help = "Only generate job script but do not submit it")
     return parser.parse_args()
 
@@ -48,15 +48,13 @@ def main():
         if k == args.queue:
             n += 1
             scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.ncpus, args.mem,\
-                                                              args.kmers, args.outdir, args.scheduler, args.highcov),\
-                           k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
+                                                              args.kmers, args.outdir, args.scheduler, args.highcov), k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
             queue = list()
             k = 0
     if k > 0:  # When there are remaining tasks in the last queue.
         n += 1
         scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.ncpus, args.mem,\
-                                        args.kmers, args.outdir, args.scheduler, args.highcov),\
-                       k, n, args.outdir, args.scheduler))
+                                        args.kmers, args.outdir, args.scheduler, args.highcov), k, n, args.outdir, args.scheduler))
     if submit:
         for s in scripts:
             print("Submit job script " + s, file = sys.stdout)
@@ -90,10 +88,9 @@ export PATH=$HOME/code/SPAdes-3.15.2/bin:$PATH
     else:  # PBS job script
         script = f"""#!/bin/bash
 # PBS configurations
+#PBS -N SPAdes
 #PBS -l select=1:ncpus={ncpus}:mem={mem}gb:ompthreads={ncpus}
 #PBS -l walltime=24:00:00
-#PBS -N SPAdes
-#PBS -j oe
 
 # Environmental settings
 module load anaconda3/personal
