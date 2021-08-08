@@ -30,7 +30,7 @@ def parse_arguments():
     parser.add_argument("--keep_temp", "-k", dest = "keep_temp", action = "store_true", help = "Keep temporary files")
     
     # Job arguments
-    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "16", help = "Memory size (GB) to be requested (default: 16)")
+    parser.add_argument("--mem", "-m", dest = "mem", type = str, required = False, default = "32", help = "Memory size (GB) to be requested (default: 32)")
     parser.add_argument("--queue", "-q", dest = "queue", type = int, required = False, default = 20, help = "Size of each serial job queue")
     parser.add_argument("--scheduler", "-s", dest = "scheduler", type = str, required = False, default = "SGE", help = "Job scheduler (SGE/PBS); default: SGE")
     parser.add_argument("--debug", "-d", dest = "debug", action = "store_true", help = "Only generate job script but do not submit it")
