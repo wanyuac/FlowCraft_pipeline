@@ -5,6 +5,7 @@ Submit PHEnix jobs to an HPC (https://github.com/phe-bioinformatics/PHEnix). The
 Notes:
     1. Dependencies: anaconda, Python >= 3.6 (for the use of f-strings)
     2. Users may need to edit this script for their HPCs. For example, renaming conda environments.
+    3. gatk fails at the stage of variant calling if insufficient memory is allocated.
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
