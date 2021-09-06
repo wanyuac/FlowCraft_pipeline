@@ -8,7 +8,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 18 Mar 2021; the latest update: 6 Aug 2021
+First version: 18 Mar 2021; the latest update: 6 Sep 2021
 """
 
 import os
@@ -38,6 +38,9 @@ def main():
     readsets = import_readsets(args.readsets)
     submit = not args.debug
     check_dir(args.outdir)
+    check_dir(os.path.join(args.outdir, "scaffold"))
+    check_dir(os.path.join(args.outdir, "contig"))
+    check_dir(os.path.join(args.outdir, "log"))
     queue = list()
     scripts = list()
     k = 0  # Counter of genomes of a queue
@@ -115,13 +118,13 @@ for g in ${genomes[@]}
 do
     if [ -f "$g/scaffolds.fasta" ]
     then
-        mv $g/scaffolds.fasta ${g}__scaffolds.fna
-        mv $g/assembly_graph_with_scaffolds.gfa ${g}__scaffolds.gfa
-        mv $g/scaffolds.paths ${g}__scaffolds.paths
-        mv $g/contigs.fasta ${g}__contigs.fna
-        mv $g/contigs.paths ${g}__contigs.paths
-        mv $g/assembly_graph.fastg ${g}.fastg
-        mv $g/spades.log ${g}.log
+        mv $g/scaffolds.fasta scaffold/${g}__scaffolds.fna
+        mv $g/assembly_graph_with_scaffolds.gfa scaffold/${g}__scaffolds.gfa
+        mv $g/scaffolds.paths scaffold/${g}__scaffolds.paths
+        mv $g/contigs.fasta contig/${g}__contigs.fna
+        mv $g/contigs.paths contig/${g}__contigs.paths
+        mv $g/assembly_graph.fastg contig/${g}.fastg
+        mv $g/spades.log log/${g}.log
     else
         echo "Warning: The genome of isolate $g could not be assembled."
     fi
