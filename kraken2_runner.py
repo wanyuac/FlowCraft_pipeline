@@ -32,7 +32,6 @@ def parse_arguments():
     parser.add_argument("--env_module", "-e", dest = "env_module", type = str, required = False, default = "anaconda/5.3.1_python3", help = "(Optional) Environmental module to be loaded")
     parser.add_argument("--conda_env", "-c", dest = "conda_env", type = str, required = False, default = "kraken", help = "(Optional) Conda environment to be loaded")
     parser.add_argument("--debug", "-d", dest = "debug", action = "store_true", help = "Only generate job script but do not submit it")
-
     return parser.parse_args()
 
 
