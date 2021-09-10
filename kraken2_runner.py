@@ -99,12 +99,12 @@ module load {env_module}
 #PBS -l walltime=24:00:00
 """
         if env_module != "":
-            script += """
+            script += f"""
 # Environmental settings
 module load {env_module}
 """
         if conda_env != "":
-            script += """source activate kraken
+            script += f"""source activate {conda_env}
 """
         script += """
 # Kraken2 jobs"""
