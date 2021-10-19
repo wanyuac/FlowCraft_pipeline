@@ -80,7 +80,12 @@ def write_job_script(script, k, i, out, scheduler):
     Returns the path of the output script
     k: number of tasks in the current script; i: the index of the current script.
     """
-    filename_ext = '.sge' if scheduler == 'SGE' else '.pbs'
+    if scheduler == 'SGE':
+        filename_ext = '.sge'
+    elif scheduler == 'PBS':
+        filename_ext = '.pbs'
+    else:
+        filename_ext = '.sh'
     f_name = os.path.join(out, 'job_list_' + str(i) + filename_ext)  # In the future, the filename extension will be determined by the job scheduler.
     print("Write %i tasks into script %s" % (k, f_name))
     with open(f_name, 'w') as f:

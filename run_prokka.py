@@ -38,7 +38,7 @@ def parse_arguments():
     parser.add_argument('--ncpus', '-n', dest = 'ncpus', type = str, required = False, default = '8', help = "Number of computational cores to be requested (default: 8)")
     parser.add_argument('--mem', '-m', dest = 'mem', type = str, required = False, default = '16', help = "Memory size (GB) to be requested (default: 16)")
     parser.add_argument('--queue', '-q', dest = 'queue', type = int, required = False, default = 20, help = "Size of each serial job queue (default: 20)")
-    parser.add_argument('--scheduler', '-s', dest = 'scheduler', type = str, required = False, default = 'SGE', help = "Job scheduler (SGE/PBS) (default: SGE)")
+    parser.add_argument('--scheduler', '-s', dest = 'scheduler', type = str, required = False, default = 'SGE', help = "Job scheduler (SGE/PBS/bash) (default: SGE)")
     parser.add_argument('--debug', '-d', dest = 'debug', action = 'store_true', help = "Only generate job script but do not submit it")
     return parser.parse_args()
 
@@ -46,6 +46,7 @@ def parse_arguments():
 def main():
     args = parse_arguments()
     assemblies = import_assemblies(args.assemblies)  # Dictionary {i : path}
+    submit = (not args.debug) and (args.scheduler in ['SGE', 'PBS'])
     check_dir(args.outdir)
     queue = list()
     scripts = list()
@@ -66,13 +67,13 @@ def main():
         scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species,\
                                                           args.proteins, args.mincontiglen, args.ncpus, args.mem, args.outdir, args.scheduler),\
                                         k, n, args.outdir, args.scheduler))
-    if args.debug:
-        print("Debugging mode: no job is submitted.", file = sys.stdout)
-    else:
+    if submit:
         for s in scripts:
             print("Submit job script " + s, file = sys.stdout)
             p = subprocess.Popen(['qsub', s])  # Do not use parameters 'shell = True, stdin = None, stdout = None, stderr = None, close_fds = True', or the job will not be submitted successfully.
             time.sleep(1)
+    else:
+        print("Debugging/bash mode: no job is submitted.", file = sys.stdout)
     return
 
 
@@ -94,7 +95,7 @@ module load anaconda/5.3.1_python3
 conda activate {conda_env}
 
 # Prokka jobs"""
-    else:  # PBS job script
+    elif scheduler == 'PBS':  # PBS job script
         script = f"""#!/bin/bash
 # PBS configurations
 #PBS -N Prokka
@@ -106,6 +107,8 @@ module load anaconda3/personal
 source activate {conda_env}
 
 # Prokka jobs"""
+    else:
+        script = f"""#!/bin/bash\nsource activate {conda_env}"""
 
     for g in assemblies.keys():
         fasta = assemblies[g]
