@@ -107,10 +107,8 @@ cd {outdir}
     genomes = list(readsets.keys())
     for g in genomes:
         reads = readsets[g]
-        tmp = f'{outdir}/tmp_{g}'
-        script += f"""\nmkdir {tmp}
-ariba run --assembler spades --spades_mode wgs --assembly_cov {cov} --nucmer_min_id {min_id} --force --spades_options "-k {kmers}" --threads {cpus} --tmp_dir {tmp} {db} {reads.r1} {reads.r2} {outdir}/{g}
-rm -rf {tmp}\n"""
+        # ARIBA creates temporary directories under the parental tmp directory with random names, so we don't need to manually create a temporary directory for each isolate.
+        script += f"""\nariba run --assembler spades --spades_mode wgs --assembly_cov {cov} --nucmer_min_id {min_id} --force --spades_options "-k {kmers}" --threads {cpus} --tmp_dir {outdir} {db} {reads.r1} {reads.r2} {outdir}/{g}"""
     return script
 
 
