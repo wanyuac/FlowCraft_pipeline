@@ -4,9 +4,9 @@ Submit Prokka jobs to an HPC. Supports SGE and PBS job schedulers. This script a
 are bacteria.
 
 Notes:
-    1. Dependencies: anaconda, Python >= 3.6 (for the use of f-strings)
-    2. A Conda environment for Prokka.
-    3. Users may need to edit this script for their HPCs. For example, renaming conda environments.
+    1. Dependencies: anaconda, Python >= 3.6 (for the use of f-strings);
+    2. A Conda environment for Prokka;
+    3. Users may need to edit this script for their HPCs. For example, renaming conda environments;
     4. No rRNA or tRNA search will be performed.
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
@@ -93,6 +93,7 @@ source /etc/profile.d/modules.sh
 module purge
 module load anaconda/5.3.1_python3
 conda activate {conda_env}
+cd {outdir}
 
 # Prokka jobs"""
     elif scheduler == 'PBS':  # PBS job script
@@ -105,6 +106,7 @@ conda activate {conda_env}
 # Environmental settings
 module load anaconda3/personal
 source activate {conda_env}
+cd {outdir}
 
 # Prokka jobs"""
     else:

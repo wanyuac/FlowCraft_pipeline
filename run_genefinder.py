@@ -77,7 +77,7 @@ module purge
 module load phe/gene_finder/2-2
 cd {outdir}
 
-# Kraken2 jobs"""
+# Genefinder jobs"""
     else:  # PBS job script
         script = f"""#!/bin/bash
 # PBS configurations
@@ -89,7 +89,7 @@ cd {outdir}
 module load phe/gene_finder/2-2
 cd {outdir}
 
-# kraken2 jobs"""
+# Genefinder jobs"""
 
     genomes = list(readsets.keys())
     for g in genomes:
