@@ -24,7 +24,7 @@ check_dependency() {
     if [ -z "$p" ]
     then
         echo "Error: $1 could not be found."  # Forgot to export PATH=...:$PATH or enable the conda environment?
-        #exit
+        exit
     fi
 }
 
