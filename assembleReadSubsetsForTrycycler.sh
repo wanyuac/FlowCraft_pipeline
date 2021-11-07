@@ -71,7 +71,7 @@ do
     sleep 1
 done
 
-# Miniasm ####################
+# Minipolish ####################
 for i in 02 05 08 11
 do
     miniasm_and_minipolish.sh ${indir}/sample_${i}.fastq "$threads" > assembly_${i}.gfa
@@ -95,3 +95,8 @@ do
     j=$(basename $i '.fasta')
     echo "${j}: $n contigs"
 done
+
+# Print assembler information ##########
+echo 'Flye assemblies: 01 04 07 10'
+echo 'Minipolish assemblies: 02 05 08 11'
+echo 'Raven assemblies: 03 06 09 12'
