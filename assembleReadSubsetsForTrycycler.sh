@@ -65,8 +65,8 @@ echo "Number of threads per job: $threads"
 for i in 01 04 07 10
 do
     flye --nano-raw ${indir}/sample_${i}.fastq --threads "$threads" --iterations 2 --out-dir "assembly_$i"  # Option '--genome-size' is no longer required since Flye v2.8.
-    cp assembly_${i}/assembly.fasta ${outdir}/assembly_${i}.fasta
-    mv assembly_${i}/assembly.gfa ${outdir}/assembly_${i}.gfa  # Save the assembly graph for quality assessment
+    mv assembly_${i}/assembly.fasta ${outdir}/assembly_${i}.fasta
+    mv assembly_${i}/assembly_graph.gfa ${outdir}/assembly_${i}.gfa  # Save the assembly graph for quality assessment
     rm -rf assembly_$i
     sleep 1
 done
