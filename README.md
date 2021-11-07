@@ -1,6 +1,6 @@
 # Bioinformatics pipelines
 
-*Yu Wan*
+By Yu Wan  
 Last update: 7 Nov 2021.
 
 
