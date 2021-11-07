@@ -25,8 +25,8 @@ This repository contains my pipelines created for research and training purposes
 
 ## Scripts
 
-### assembleReadSubsetsForTrycycler.sh
-This is a helper script for [Trycycler](https://github.com/rrwick/Trycycler/), and it uses [Flye](https://github.com/fenderglass/Flye/), [Minipolish](https://github.com/rrwick/Minipolish), and [Raven](https://github.com/lbcb-sci/raven/) to assemble the 12 subsets of long reads as the input of Trycycler. This script is more sophisticated and perhaps more versatile than the example code on Trycycler's [wiki](https://github.com/rrwick/Trycycler/wiki/Generating-assemblies).
+### Assembling subsets of long reads for Trycycler
+- `assembleReadSubsetsForTrycycler.sh`: This is a helper script for [Trycycler](https://github.com/rrwick/Trycycler/), and it uses [Flye](https://github.com/fenderglass/Flye/), [Minipolish](https://github.com/rrwick/Minipolish), and [Raven](https://github.com/lbcb-sci/raven/) to assemble the 12 subsets of long reads as the input of Trycycler. This script is more sophisticated and perhaps more versatile than the example code on Trycycler's [wiki](https://github.com/rrwick/Trycycler/wiki/Generating-assemblies).
 
 ### UKHSA's Genefinder pipeline
 - `run_genefinder.py`: runs the [Genefinder](https://github.com/phe-bioinformatics/gene_finder) pipeline through the SGE/PBG job scheduler.
