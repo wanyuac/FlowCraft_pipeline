@@ -1,11 +1,11 @@
 #!/bin/bash
-# Assemble 12 subsets of long reads using Flye, Raven, and Miniasm for Trycycler.
+# Assemble 12 subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
 #
 # Dependencies:
-#     - Flye (github.com/fenderglass/Flye), Raven (github.com/lbcb-sci/raven), Miniasm (github.com/lh3/miniasm)
-#     - minimap2 (github.com/lh3/minimap2) and Racon (github.com/isovic/racon)
-#     - Minipolish (github.com/rrwick/Minipolish). Of note, path to miniasm_and_minipolish.sh needs to be exported to $PATH before
+#     - Flye (github.com/fenderglass/Flye), Raven (github.com/lbcb-sci/raven)
+#     - Minipolish (github.com/rrwick/Minipolish). Please ensure exporting the path to miniasm_and_minipolish.sh to $PATH before
 #       running this script.
+#       *  Miniasm (github.com/lh3/miniasm), minimap2 (github.com/lh3/minimap2), and Racon (github.com/isovic/racon)
 #     - any2fasta (github.com/tseemann/any2fasta)
 # Please ensure these dependencies are accessible in your system. For example, you may activate the corresponding Conda environment
 # before running this script.
