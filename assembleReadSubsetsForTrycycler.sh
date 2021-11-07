@@ -60,10 +60,6 @@ fi
 echo "Input directory: $indir"
 echo "Output directory: $outdir"
 echo "Number of threads per job: $threads"
-if [ ! -z "$size" ]
-then
-    echo "Reference genome size: $size"
-fi
 
 # Flye ####################
 for i in 01 04 07 10
