@@ -100,7 +100,7 @@ done
 # Raven-assembler ####################
 for i in 03 06 09 12
 do
-    raven --threads "$threads" --polishing-rounds 2 ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fasta
+    raven --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fasta
     rm raven.cereal
     sleep 1
 done
