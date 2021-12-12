@@ -107,7 +107,7 @@ for i in `seq 1 $subsets`; do
         miniasm_and_minipolish.sh ${indir}/sample_${i}.fastq "$threads" > assembly_${i}.gfa
         any2fasta assembly_${i}.gfa > ${outdir}/assembly_${i}.fna
         mv assembly_${i}.gfa ${outdir}/assembly_${i}.gfa
-        indices_mini=($i)
+        indices_mini+=($i)
     fi
     assembler=$(($assembler + 1))
     if [ "$assembler" -gt 3 ]; then
