@@ -1,6 +1,6 @@
 # Helper scripts for trycycler
 
-Yu Wan
+Yu Wan  
 Last update: 12 Dec 2021
 
 [Trycycler](https://github.com/rrwick/Trycycler/) is a pipeline developed by Ryan Wick et al. for hybrid assembly of bacterial genomes. I found it helpful to generate accurate bacterial complete reference genomes, therefore, I have developed a few helper scripts to facilitate the use of Trycycler.
