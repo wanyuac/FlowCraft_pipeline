@@ -18,7 +18,7 @@
 # Previous name: assembleReadSubsetsForTrycycler.sh
 # Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First version: 6 Nov 2021; the latest update: 12 Dec 2021
+# First version: 6 Nov 2021; the latest update: 15 Dec 2021
 
 # Print help information ####################
 print_help() {
@@ -99,7 +99,7 @@ for i in `seq 1 $subsets`; do
         indices_flye+=($i)
     elif [ "$assembler" -eq 2 ]; then
         echo "Use Raven to assemble read set $i"
-        raven --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fna
+        raven --kmer-len 25 --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fna
         rm raven.cereal
         indices_raven+=($i)
     else
