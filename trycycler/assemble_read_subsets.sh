@@ -2,7 +2,7 @@
 # Assemble subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
 #
 # Command line:
-#     bash assemble_read_subsets.sh [input directory] [output directory] [number of read subsets (default: 12)] [number of threads (default: 4)]
+#     bash assemble_read_subsets.sh [input directory] [output directory] [number of read subsets (default: 12)] [number of threads (default: 4)] [k-mer size for Raven]
 #     Note that directories should not be ended with slashes.
 #
 # Dependencies:
@@ -18,12 +18,12 @@
 # Previous name: assembleReadSubsetsForTrycycler.sh
 # Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First version: 6 Nov 2021; the latest update: 15 Dec 2021
+# First version: 6 Nov 2021; the latest update: 18 Dec 2021
 
 # Print help information ####################
 print_help() {
     echo "Assemble 12 subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
-    assemble_read_subsets.sh [input directory] [output directory] [number of threads (default: 4)]
+    assemble_read_subsets.sh [input directory] [output directory] [number of threads (default: 4)] [k-mer size for Raven (default: 20)]
     Directory paths should not be ended with slashes. Please ensure exporting the path to miniasm_and_minipolish.sh
     to \$PATH before running this script."
 }
@@ -53,6 +53,7 @@ indir="$1"
 outdir="$2"
 subsets="$3"
 threads="$4"
+kmer="$5"
 
 if [ ! -d "$indir" ]; then
     echo "Error: input directory $indir does not exist."
@@ -72,6 +73,11 @@ fi
 if [ -z "$threads" ]; then
     echo "Use four threads."
     threads=4
+fi
+
+if [ -z "$kmer" ]; then
+    echo "Set k-mer size to 20 for Raven assembler."
+    kmer=20
 fi
 
 echo "Input directory: $indir"
@@ -99,8 +105,8 @@ for i in `seq 1 $subsets`; do
         indices_flye+=($i)
     elif [ "$assembler" -eq 2 ]; then
         echo "Use Raven to assemble read set $i"
-        raven --kmer-len 25 --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fna
-        rm raven.cereal
+        raven --kmer-len $kmer --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fna
+        mv raven.cereal ${outdir}/assembly_${i}.cereal
         indices_raven+=($i)
     else
         echo "Use Minipolish to assemble read set $i"
