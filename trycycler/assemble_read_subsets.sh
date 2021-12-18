@@ -23,7 +23,7 @@
 # Print help information ####################
 print_help() {
     echo "Assemble 12 subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
-    assemble_read_subsets.sh [input directory] [output directory] [number of threads (default: 4)] [k-mer size for Raven (default: 20)]
+    assemble_read_subsets.sh [input directory] [output directory] [number of read subsets (default: 12)] [number of threads (default: 4)] [k-mer size for Raven (default: 20)]
     Directory paths should not be ended with slashes. Please ensure exporting the path to miniasm_and_minipolish.sh
     to \$PATH before running this script."
 }
