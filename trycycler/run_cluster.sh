@@ -34,7 +34,7 @@ if [ -f "$1" ]; then
         fq="${cols[2]}"  # FASTQ file of the current sample
         if [ -f "$fq" ]; then
             echo "Clustering contigs of sample $i from directory $fa with FASTQ file ${fq}."
-            trycycler cluster --assemblies ${fa}/*.fasta --reads $fq --out_dir $od
+            trycycler cluster --assemblies ${fa}/*.fasta --reads $fq --out_dir ${od}/$i
         else
             echo "Input error: FASTQ file $fq is not accessible."
         fi
