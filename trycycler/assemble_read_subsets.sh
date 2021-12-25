@@ -1,5 +1,9 @@
 #!/bin/bash
-# Assemble 12 subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
+# Assemble subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
+#
+# Command line:
+#     bash assemble_read_subsets.sh [input directory] [output directory] [number of read subsets (default: 12)] [number of threads (default: 4)] [k-mer size for Raven]
+#     Note that directories should not be ended with slashes.
 #
 # Dependencies:
 #     - Flye (github.com/fenderglass/Flye), Raven (github.com/lbcb-sci/raven)
@@ -10,26 +14,21 @@
 # Please ensure these dependencies are accessible in your system. For example, you may activate the corresponding Conda environment
 # before running this script.
 #
-# Command line
-#     bash assemble_read_subsets.sh [input directory] [output directory] [number of threads (default: 4)]
-#     Note that directories should not be ended with slashes.
-#
 # Modified from Ryan Wick's code on github.com/rrwick/Trycycler/wiki/Generating-assemblies.
 # Previous name: assembleReadSubsetsForTrycycler.sh
 # Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First version: 6 Nov 2021; the latest update: 11 Dec 2021
+# First version: 6 Nov 2021; the latest update: 18 Dec 2021
 
 # Print help information ####################
 print_help() {
     echo "Assemble 12 subsets of long reads using Flye, Raven, and Minipolish for Trycycler.
-    assemble_read_subsets.sh [input directory] [output directory] [number of threads (default: 4)]
+    assemble_read_subsets.sh [input directory] [output directory] [number of read subsets (default: 12)] [number of threads (default: 4)] [k-mer size for Raven (default: 20)]
     Directory paths should not be ended with slashes. Please ensure exporting the path to miniasm_and_minipolish.sh
     to \$PATH before running this script."
 }
 
-if [ "$#" -lt 2 ]
-then
+if [ "$#" -lt 2 ]; then
     echo 'Error: at least two arguments are required.'
     print_help
     exit
@@ -38,82 +37,109 @@ fi
 # Check dependencies ####################
 check_dependency() {
     p=$(which "$1")
-    if [ -z "$p" ]
-    then
+    if [ -z "$p" ]; then
         echo "Error: $1 could not be found."  # Forgot to export PATH=...:$PATH or enable the conda environment?
         exit
     fi
 }
 
 dependencies=( flye miniasm_and_minipolish.sh any2fasta raven minimap2 miniasm minipolish )
-
-for s in ${dependencies[@]}
-do
+for s in ${dependencies[@]}; do
     check_dependency $s
 done
 
 # Read parameters and check dependencies ####################
 indir="$1"
 outdir="$2"
-threads="$3"
+subsets="$3"
+threads="$4"
+kmer="$5"
 
-if [ ! -d "$indir" ]
-then
+if [ ! -d "$indir" ]; then
     echo "Error: input directory $indir does not exist."
     exit
 fi
 
-if [ ! -d "$outdir" ]
-then
+if [ ! -d "$outdir" ]; then
     echo "Create output directory $outdir"
     mkdir $outdir
 fi
 
-if [ -z "$threads" ]
-then
+if [ -z "$subsets" ]; then
+    echo "Set the number of read subsets to 12."
+    subsets=12
+fi
+
+if [ -z "$threads" ]; then
+    echo "Use four threads."
     threads=4
+fi
+
+if [ -z "$kmer" ]; then
+    echo "Set k-mer size to 20 for Raven assembler."
+    kmer=20
 fi
 
 echo "Input directory: $indir"
 echo "Output directory: $outdir"
 echo "Number of threads per job: $threads"
 
-# Flye ####################
-for i in 01 04 07 10
-do
-    flye --nano-raw ${indir}/sample_${i}.fastq --threads "$threads" --iterations 2 --out-dir "assembly_$i"  # Option '--genome-size' is no longer required since Flye v2.8.
-    mv assembly_${i}/assembly.fasta ${outdir}/assembly_${i}.fasta
-    mv assembly_${i}/assembly_graph.gfa ${outdir}/assembly_${i}.gfa  # Save the assembly graph for quality assessment
-    rm -rf assembly_$i  # Delete the temporary directory
-    sleep 1
-done
+# Iteratively run assemblers ####################
+assembler=1  # Selector for assembers; 1: flye; 2: raven; 3: minipolish
+indices_flye=()
+indices_raven=()
+indices_mini=()
 
-# Minipolish ####################
-for i in 02 05 08 11
-do
-    miniasm_and_minipolish.sh ${indir}/sample_${i}.fastq "$threads" > assembly_${i}.gfa
-    any2fasta assembly_${i}.gfa > ${outdir}/assembly_${i}.fasta
-    mv assembly_${i}.gfa ${outdir}/assembly_${i}.gfa
-    sleep 1
-done
-
-# Raven-assembler ####################
-for i in 03 06 09 12
-do
-    raven --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fasta
-    rm raven.cereal
+for i in `seq 1 $subsets`; do
+    if [ "$i" -lt 10 ]; then
+        i="0$i"
+    fi
+    if [ "$assembler" -eq 1 ]; then
+        echo "Use Flye to assemble read set $i"
+        flye --nano-raw ${indir}/sample_${i}.fastq --threads "$threads" --scaffold --iterations 2 --out-dir "assembly_$i"  # Option '--genome-size' is no longer required since Flye v2.8.
+        mv assembly_${i}/assembly.fasta ${outdir}/assembly_${i}.fna
+        mv assembly_${i}/assembly_graph.gfa ${outdir}/assembly_${i}.gfa  # Save the assembly graph for quality assessment
+        mv assembly_${i}/assembly_info.txt ${outdir}/assembly_${i}.txt  # Assembly summary
+        mv assembly_${i}/flye.log ${outdir}/assembly_${i}.log
+        rm -rf assembly_$i  # Delete the temporary directory
+        indices_flye+=($i)
+    elif [ "$assembler" -eq 2 ]; then
+        echo "Use Raven to assemble read set $i"
+        raven --kmer-len $kmer --threads "$threads" --polishing-rounds 2 --graphical-fragment-assembly ${outdir}/assembly_${i}.gfa ${indir}/sample_${i}.fastq > ${outdir}/assembly_${i}.fna
+        mv raven.cereal ${outdir}/assembly_${i}.cereal
+        indices_raven+=($i)
+    else
+        echo "Use Minipolish to assemble read set $i"
+        miniasm_and_minipolish.sh ${indir}/sample_${i}.fastq "$threads" > assembly_${i}.gfa
+        any2fasta assembly_${i}.gfa > ${outdir}/assembly_${i}.fna
+        mv assembly_${i}.gfa ${outdir}/assembly_${i}.gfa
+        indices_mini+=($i)
+    fi
+    assembler=$(($assembler + 1))
+    if [ "$assembler" -gt 3 ]; then
+        assembler=1
+    fi
     sleep 1
 done
 
 # Count the number of contigs in each assembly ####################
-for i in $(ls -1 ${outdir}/*.fasta)
-do
+for i in $(ls -1 ${outdir}/*.fna); do
     n=$(grep -c '>' $i)
-    j=$(basename $i '.fasta')
+    j=$(basename $i '.fna')
     echo "${j}: $n contigs"
 done
 
 # Print assembler information ##########
-echo 'Flye assemblies: 01 04 07 10'
-echo 'Minipolish assemblies: 02 05 08 11'
-echo 'Raven assemblies: 03 06 09 12'
+print_asm() {
+    arr=("$@")
+    ids=''
+    for i in ${arr[@]}; do
+        ids="$ids $i"
+    done
+    echo "$ids"
+}
+
+echo Flye assemblies:$(print_asm "${indices_flye[@]}")
+echo Raven assemblies:$(print_asm "${indices_raven[@]}")
+echo Minipolish assemblies:$(print_asm "${indices_mini[@]}")
+echo "All $subsets subsets of reads have been assembled successfully."

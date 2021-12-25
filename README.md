@@ -1,7 +1,7 @@
 # Bioinformatics pipelines
 
 By Yu Wan  
-Last update: 7 Nov 2021.
+Last update: 12 Dec 2021.
 
 
 This repository contains my pipelines created for research and training purposes. Often in this repository I only include files that were manually modified for system compatibility or a specific analysis. Click each subdirectory for details. An adaptation is often necessary when migrating these pipelines to other platforms since components of every pipeline may be system-dependent.
@@ -27,7 +27,7 @@ This repository contains my pipelines created for research and training purposes
 ## Scripts
 
 ### Assembling subsets of long reads for [Trycycler](https://github.com/rrwick/Trycycler/)
-- `assembleReadSubsetsForTrycycler.sh`: Uses [Flye](https://github.com/fenderglass/Flye/), [Minipolish](https://github.com/rrwick/Minipolish), and [Raven](https://github.com/lbcb-sci/raven/) to assemble the 12 subsets of long reads as the input of Trycycler. This script is more sophisticated and perhaps more versatile than the example code on Trycycler's [wiki](https://github.com/rrwick/Trycycler/wiki/Generating-assemblies).
+See the manual in subdirectory `trycycler`.
 
 
 ### UKHSA's Genefinder pipeline

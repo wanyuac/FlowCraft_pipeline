@@ -1,17 +1,20 @@
 #!/bin/bash
 # Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# Publication: 10 Dec 2021; latest update: 10 Dec 2021.
+# Publication: 10 Dec 2021; latest update: 18 Dec 2021.
 
 display_useage() {
     echo "Runs command \'trycycler subsample\' for multiple samples.
-    Command: run_subsample.sh [samples.tsv] [parental output directory]
-    The header-free tab-delimited input file samples.tsv consists of four columns: sample name, estimated genome size (e.g., '5m'),
-    the path to the input FASTQ file, and the number of subsets of reads.
+
+    Command: run_subsample.sh [sampling_settings.tsv] [parental output directory]
+
+    The header-free tab-delimited input file sampling_settings consists of five columns: (1) sample name, (2) estimated genome size
+    (e.g., '5m'), (3) the path to the input FASTQ file, (4) the number of subsets of reads, and (5) the minimum read depth for
+    calculating the size of the subset (Note: the default depth of the \'trycycler subsample\' command is 25 folds).
     Please ensure trycycler is in \$PATH. Also, note that \'~\' is not supported for the paths of input FASTQ files."
 }
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -lt 2 ]; then
     display_useage
     exit
 fi
@@ -28,9 +31,10 @@ if [ -f "$1" ]; then
         s="${cols[1]}"  # Genome size
         f="${cols[2]}"  # FASTQ file
         c="${cols[3]}"  # Number of subsets
+        d="${cols[4]}"  # Minimum read depth of each subset for the current genome.
         if [ -f "$f" ]; then
-            echo "Creating $c subsets of long reads from $f for sample $i of genome size $s"
-            trycycler subsample --reads $f --count $c --genome_size $s --min_read_depth 25 --out_dir ${2}/$i
+            echo "Creating $c subsets of ${d}-fold long reads from $f for sample $i of genome size $s"
+            trycycler subsample --reads $f --count $c --genome_size $s --min_read_depth $d --out_dir ${2}/$i
         else
             echo "Input error: FASTQ file $f is not accessible."
         fi
