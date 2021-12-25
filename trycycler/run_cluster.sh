@@ -5,9 +5,12 @@
 
 display_useage() {
     echo "Runs command \'trycycler cluster\' for multiple samples.
-    Command: run_cluster.sh [samples.tsv] [parental output directory]
+    Command:
+        run_cluster.sh [samples.tsv] [parental output directory] [number of threads (optional; default: 4)]
+    Example:
+        ./run_cluster.sh samples.tsv clusters 8 1>clustering.log 2>&1
     The header-free tab-delimited input file samples.tsv consists of four columns: sample name, directory of curated FASTA files,
-    and the path to each FASTQ file: [sample]\t[FASTA directory and wildcard]\t[FASTQ file]. Every directory path should not be finished by a forward slash.
+    and the path to each FASTQ file: [sample name]\t[FASTA directory and wildcard]\t[FASTQ file]. Every directory path should not be finished by a forward slash.
     Examples of lines (in a single TSV file):
         isolate_1    /wgs/isolate_1/*.fna    /wgs/isolate_1.fastq.gz
         isolate_2    /wgs/isolate_2/*.fasta  /wgs/isolate_2.fastq.gz
@@ -15,7 +18,7 @@ display_useage() {
     Please ensure trycycler is in \$PATH. Also, note that \'~\' is not supported for the paths of input FASTQ files."
 }
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -lt 2 ]; then
     display_useage
     exit
 fi
@@ -26,17 +29,27 @@ if [ ! -d "$od" ]; then
     mkdir -p $od
 fi
 
+t=$3
+if [ -z "$t" ]; then
+    echo "Number of threads is not given, so set it to the default value of 4."
+    t=4
+fi
+
 if [ -f "$1" ]; then
     while read -r line; do
-        IFS=$'\t' read -r -a cols <<< "$line"
-        i="${cols[0]}"  # Isolate name
-        fa="${cols[1]}"  # Directory of curated FASTA files of the current sample (no forward slash at the end of the path)
-        fq="${cols[2]}"  # FASTQ file of the current sample
-        if [ -f "$fq" ]; then
-            echo "Clustering contigs of sample $i from directory $fa with FASTQ file ${fq}."
-            trycycler cluster --assemblies ${fa} --reads $fq --out_dir ${od}/$i  # For instance, fa='/wgs/isolate_1/*.fna'
-        else
-            echo "Input error: FASTQ file $fq is not accessible."
+        if [ ! -z "$line" ]; then
+            IFS=$'\t' read -r -a cols <<< "$line"
+            i="${cols[0]}"  # Isolate name
+            fa="${cols[1]}"  # Directory of curated FASTA files of the current sample (no forward slash at the end of the path)
+            fq="${cols[2]}"  # FASTQ file of the current sample
+            if [ -f "$fq" ]; then
+                echo -e "\nClustering contigs of sample ${i}:"
+                echo "    FASTA: $fa"
+                echo "    FASTQ: $fq"
+                trycycler cluster --assemblies ${fa} --reads $fq --out_dir ${od}/$i --threads $t  # For instance, fa='/wgs/isolate_1/*.fna'
+            else
+                echo "Input error: FASTQ file $fq is not accessible."
+            fi
         fi
     done < "$1"
 else
