@@ -1,4 +1,0 @@
-TrimmomaticPE: Started with arguments:
- -phred33 -threads 2 ERR134515_1.fastq.gz ERR134515_2.fastq.gz ERR134515_paired_1.fastq.gz ERR134515_unpaired_1.fastq.gz ERR134515_paired_2.fastq.gz ERR134515_unpaired_2.fastq.gz SLIDINGWINDOW:5:20 MINLEN:50
-Input Read Pairs: 4684119 Both Surviving: 4388459 (93.69%) Forward Only Surviving: 243838 (5.21%) Reverse Only Surviving: 28142 (0.60%) Dropped: 23680 (0.51%)
-TrimmomaticPE: Completed successfully
