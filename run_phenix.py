@@ -9,7 +9,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 8 Aug 2021; the latest update: 11 Jan 2022
+First version: 8 Aug 2021; the latest update: 10 Jan 2022
 """
 
 import os
