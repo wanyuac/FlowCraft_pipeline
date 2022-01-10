@@ -42,9 +42,10 @@ def main():
 	args = parse_arguments()
 	readsets = import_readsets(args.readsets)
 	submit = not args.debug
-	check_dir(args.outdir)
-	script_dir = os.path.join(args.outdir, "scripts")
-	check_dir(script_dir)
+	script_dir = os.path.join(args.outdir, "script")
+	vcf_dir = os.path.join(args.outdir, "vcf")
+	for d in [args.outdir, script_dir, vcf_dir]:
+		check_dir(d)
 	queue = list()
 	scripts = list()
 	other_args = "--json --keep-temp" if args.keep_temp else "--json"
@@ -56,13 +57,13 @@ def main():
 		if k == args.queue:  # When the current queue becomes full
 			n += 1
 			scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.ref, args.filters, args.mem,\
-															  args.outdir, args.scheduler, other_args), k, n, script_dir, args.scheduler))  # Append the path of the new script to list 'scripts'
+															  vcf_dir, args.scheduler, other_args), k, n, script_dir, args.scheduler))  # Append the path of the new script to list 'scripts'
 			queue = list()
 			k = 0
 	if k > 0:  # When there are remaining tasks in the last queue.
 		n += 1
 		scripts.append(write_job_script(create_job_script({genome : readsets[genome] for genome in queue}, args.ref, args.filters, args.mem,\
-														  args.outdir, args.scheduler, other_args), k, n, script_dir, args.scheduler))
+														  vcf_dir, args.scheduler, other_args), k, n, script_dir, args.scheduler))
 	if submit:
 		for s in scripts:
 			print("Submit job script " + s, file = sys.stdout)
