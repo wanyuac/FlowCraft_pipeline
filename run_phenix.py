@@ -79,7 +79,7 @@ def create_job_script(readsets, ref, filters, mem, outdir, scheduler, other_args
 # SGE configurations
 #$ -N PHEnix
 #$ -S /bin/bash
-#$ -l h_vmem={mem}G
+# -l h_vmem={mem}G  # Sometimes the system has an issue in running JAVA when this parameter is given, hence I removed this line out of the SGE script.
 
 # Environmental settings
 source $HOME/.bash_profile
