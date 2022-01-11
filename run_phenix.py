@@ -102,7 +102,7 @@ module load snp_pipeline/1-4-3
 	genomes = list(readsets.keys())
 	for g in genomes:
 		reads = readsets[g]
-		script += f"""\nMapping reads of {g}"""
+		script += f"""\necho 'Mapping reads of {g}'"""
 		script += f"""\nphenix.py run_snp_pipeline -r1 {reads.r1} -r2 {reads.r2} --reference {ref} --sample-name {g} --mapper bwa --variant gatk --filters '{filters}' --outdir {outdir} {other_args}"""
 	return script
 
