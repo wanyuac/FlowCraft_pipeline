@@ -9,7 +9,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 8 Aug 2021; the latest update: 10 Jan 2022
+First version: 8 Aug 2021; the latest update: 11 Jan 2022
 """
 
 import os
@@ -102,6 +102,7 @@ module load snp_pipeline/1-4-3
 	genomes = list(readsets.keys())
 	for g in genomes:
 		reads = readsets[g]
+		script += f"""\n\n>&2 echo 'Mapping reads of {g}'"""
 		script += f"""\nphenix.py run_snp_pipeline -r1 {reads.r1} -r2 {reads.r2} --reference {ref} --sample-name {g} --mapper bwa --variant gatk --filters '{filters}' --outdir {outdir} {other_args}"""
 	return script
 
