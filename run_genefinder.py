@@ -8,7 +8,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 5 Aug 2021; the latest update: 6 Aug 2021
+First version: 5 Aug 2021; the latest update: 24 Feb 2022
 """
 
 import os
@@ -74,7 +74,10 @@ def create_job_script(readsets, db, mem, outdir, scheduler):
 source $HOME/.bash_profile
 source /etc/profile.d/modules.sh
 module purge
-module load phe/gene_finder/2-2
+#module load phe/gene_finder/2-2
+module unuse /phengs/hpc_software/Modules/modulefiles
+module use /phengs/hpc_software/Modules/production
+module load phe/gene_finder
 cd {outdir}
 
 # Genefinder jobs"""
@@ -86,7 +89,10 @@ cd {outdir}
 #PBS -l walltime=24:00:00
 
 # Environmental settings
-module load phe/gene_finder/2-2
+#module load phe/gene_finder/2-2
+module unuse /phengs/hpc_software/Modules/modulefiles
+module use /phengs/hpc_software/Modules/production
+module load phe/gene_finder
 cd {outdir}
 
 # Genefinder jobs"""
