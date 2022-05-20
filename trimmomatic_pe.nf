@@ -14,11 +14,16 @@ Recommend to run the following command in a screen session:
 Users may want to adjust queue parameters in trimmomatic_pe.config for their analyses. This pipeline uses a default queue size of 20.
 
 [Declarations]
-Copyright (C) 2020 Yu Wan <wanyuac@126.com>
+Copyright (C) 2020-2022 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public License v3.0
-Publication: 27/2/2020; last modification: 11/10/2020
+Publication: 27 Feb 2020; last modification: 20 May 2022
 */
 
+/*
+To avoid the problem: Missing workflow definition - DSL2 requires at least a workflow block in the main script #63.
+See https://bytemeta.vip/repo/genomicsITER/NanoCLUST/issues/63.
+*/
+nextflow.enable.dsl = 1
 
 /*********** Create output directories before main processes. ***********/
 def outdir_par = new File(params.outdir)  // Parental output directory
@@ -118,7 +123,7 @@ process fastqc {
     
     script:
     """
-    ${params.fastqcDir}/fastqc --dir . --outdir . --noextract --nogroup --format fastq --quiet --threads 2 ${paired_fastq}
+    ${params.fastqcDir}/fastqc --dir . --outdir . --noextract --nogroup --format fastq --quiet --threads 4 ${paired_fastq}
     """
 }
 
@@ -129,8 +134,8 @@ process multiqc {  // Terminal process
     //publishDir path: "${multiqc_outdir}", pattern: "multiqc_report.html", mode: "copy", overwrite: true
     
     /*
-      Do not use .collect() as it launches the multiqc process for each input file - you only want multiqc
-      to run only once.      
+      Do not use .collect() as it launches the multiqc process for each input file - you only want multiqc to run only once.
+      Method last() of object fastqc_reports triggers the multiqc process when the last element of fastqc_reports is generated.
     */
     input:
     file single_file from fastqc_reports.last()
