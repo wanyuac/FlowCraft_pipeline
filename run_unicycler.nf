@@ -58,6 +58,9 @@ process Unicycler {
     """
 }
 
+/*------------------------------------------------------------------------------
+                           Main 
+------------------------------------------------------------------------------*/
 workflow {
     readsets = Channel.fromFilePairs(params.fastq)
     Unicycler(readsets)
