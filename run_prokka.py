@@ -11,7 +11,7 @@ Notes:
 
 Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-First version: 18 Oct 2021; the latest update: 19 Oct 2021
+First version: 18 Oct 2021; the latest update: 07 Feb 2023
 """
 
 import os
@@ -32,6 +32,7 @@ def parse_arguments():
     parser.add_argument('--species', '-sp', dest = 'species', type = str, required = True, help = "Species name")
     parser.add_argument('--proteins', '-p', dest = 'proteins', type = str, required = True, help = "A FASTA or GenBank file to use for first-priority annotation searches")
     parser.add_argument('--mincontiglen', '-l', dest = 'mincontiglen', type = str, required = False, default = '200', help = "Minimum length of contigs to keep (default: 200 bp)")
+    parser.add_argument('--rna', '-r', dest = 'rna', action = 'store_true', help = "Enable annotation of tRNA and rRNA")
     
     # Job parameters
     parser.add_argument('--outdir', '-o', dest = 'outdir', type = str, required = False, default = 'output', help = "Absolute path to the parental output directory")
@@ -58,14 +59,14 @@ def main():
         if k == args.queue:
             n += 1
             scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species,\
-                                                              args.proteins, args.mincontiglen, args.ncpus, args.mem, args.outdir, args.scheduler),\
+                                                              args.proteins, args.mincontiglen, args.rna, args.ncpus, args.mem, args.outdir, args.scheduler),\
                                             k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
             queue = list()
             k = 0
     if k > 0:  # When there are remaining tasks in the last queue.
         n += 1
         scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species,\
-                                                          args.proteins, args.mincontiglen, args.ncpus, args.mem, args.outdir, args.scheduler),\
+                                                          args.proteins, args.mincontiglen, args.rna, args.ncpus, args.mem, args.outdir, args.scheduler),\
                                         k, n, args.outdir, args.scheduler))
     if submit:
         for s in scripts:
@@ -77,8 +78,9 @@ def main():
     return
 
 
-def create_job_script(assemblies, conda_env, genus, species, proteins, mincontiglen, ncpus, mem, outdir, scheduler):
+def create_job_script(assemblies, conda_env, genus, species, proteins, mincontiglen, rna, ncpus, mem, outdir, scheduler):
     outdir = os.path.abspath(outdir)
+    rna_conf = '--quiet' if rna else '--norrna --notrna --quiet'
     if scheduler == 'SGE':
         script = f"""#!/bin/bash
 # SGE configurations
@@ -115,7 +117,7 @@ cd {outdir}
     for g in assemblies.keys():
         fasta = assemblies[g]
         subdir = os.path.join(outdir, g)  # Do not need to run check_dir(subdir) as SPAdes creates an output directory if it does not exist.
-        script += f"""\nprokka --outdir {subdir} --prefix {g} --locustag {g} --increment 1 --kingdom Bacteria --genus {genus} --species {species} --strain {g} --gcode 11 --force --addgenes --proteins {proteins} --cpus {ncpus} --mincontiglen {mincontiglen} --norrna --notrna --quiet {fasta}"""
+        script += f"""\nprokka --outdir {subdir} --prefix {g} --locustag {g} --increment 1 --kingdom Bacteria --genus {genus} --species {species} --strain {g} --gcode 11 --force --addgenes --proteins {proteins} --cpus {ncpus} --mincontiglen {mincontiglen} {rna_conf} {fasta}"""
     return script
 
 
