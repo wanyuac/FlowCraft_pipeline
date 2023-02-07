@@ -30,6 +30,7 @@ def parse_arguments():
     parser.add_argument('--conda', '-c', dest = 'conda', type = str, required = True, help = "Name of the conda environment for Prokka")
     parser.add_argument('--genus', '-g', dest = 'genus', type = str, required = True, help = "Genus name")
     parser.add_argument('--species', '-sp', dest = 'species', type = str, required = True, help = "Species name")
+    parser.add_argument('--strain', '-st', dest = 'strain', type = str, required = False, default = '', help = "Strain name (default: none)")
     parser.add_argument('--proteins', '-p', dest = 'proteins', type = str, required = True, help = "A FASTA or GenBank file to use for first-priority annotation searches")
     parser.add_argument('--mincontiglen', '-l', dest = 'mincontiglen', type = str, required = False, default = '200', help = "Minimum length of contigs to keep (default: 200 bp)")
     parser.add_argument('--rna', '-r', dest = 'rna', action = 'store_true', help = "Enable annotation of tRNA and rRNA")
@@ -58,14 +59,14 @@ def main():
         queue.append(i)
         if k == args.queue:
             n += 1
-            scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species,\
+            scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species, args.strain,\
                                                               args.proteins, args.mincontiglen, args.rna, args.ncpus, args.mem, args.outdir, args.scheduler),\
                                             k, n, args.outdir, args.scheduler))  # Append the path of the new script to list 'scripts'
             queue = list()
             k = 0
     if k > 0:  # When there are remaining tasks in the last queue.
         n += 1
-        scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species,\
+        scripts.append(write_job_script(create_job_script({genome : assemblies[genome] for genome in queue}, args.conda, args.genus, args.species, args.strain,\
                                                           args.proteins, args.mincontiglen, args.rna, args.ncpus, args.mem, args.outdir, args.scheduler),\
                                         k, n, args.outdir, args.scheduler))
     if submit:
@@ -78,9 +79,10 @@ def main():
     return
 
 
-def create_job_script(assemblies, conda_env, genus, species, proteins, mincontiglen, rna, ncpus, mem, outdir, scheduler):
+def create_job_script(assemblies, conda_env, genus, species, strain, proteins, mincontiglen, rna, ncpus, mem, outdir, scheduler):
     outdir = os.path.abspath(outdir)
     rna_conf = '--quiet' if rna else '--norrna --notrna --quiet'
+    strain_conf = f'--strain {strain} --force' if strain != '' else '--force'
     if scheduler == 'SGE':
         script = f"""#!/bin/bash
 # SGE configurations
@@ -117,7 +119,7 @@ cd {outdir}
     for g in assemblies.keys():
         fasta = assemblies[g]
         subdir = os.path.join(outdir, g)  # Do not need to run check_dir(subdir) as SPAdes creates an output directory if it does not exist.
-        script += f"""\nprokka --outdir {subdir} --prefix {g} --locustag {g} --increment 1 --kingdom Bacteria --genus {genus} --species {species} --strain {g} --gcode 11 --force --addgenes --proteins {proteins} --cpus {ncpus} --mincontiglen {mincontiglen} {rna_conf} {fasta}"""
+        script += f"""\nprokka --outdir {subdir} --prefix {g} --locustag {g} --increment 1 --kingdom Bacteria --genus {genus} --species {species} {strain_conf} --gcode 11 --addgenes --proteins {proteins} --cpus {ncpus} --mincontiglen {mincontiglen} {rna_conf} {fasta}"""
     return script
 
 
